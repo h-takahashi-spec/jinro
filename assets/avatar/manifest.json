@@ -1,0 +1,150 @@
+{
+ "bg": [
+  "bg_01.webp",
+  "bg_02.webp",
+  "bg_03.webp",
+  "bg_04.webp",
+  "bg_05.webp",
+  "bg_06.webp",
+  "bg_07.webp",
+  "bg_08.webp"
+ ],
+ "body": [
+  "body_01.webp",
+  "body_02.webp",
+  "body_03.webp",
+  "body_04.webp",
+  "body_05.webp",
+  "body_06.webp",
+  "body_07.webp",
+  "body_08.webp",
+  "body_09.webp",
+  "body_10.webp"
+ ],
+ "kind": [
+  "kind_bear_01.webp",
+  "kind_cat_01.webp",
+  "kind_cat_02.webp",
+  "kind_cat_03.webp",
+  "kind_fox_01.webp",
+  "kind_ghost_01.webp",
+  "kind_rabbit_01.webp",
+  "kind_robot_01.webp",
+  "kind_shiba_01.webp",
+  "kind_shiba_02.webp",
+  "kind_spirit_01.webp",
+  "kind_tanuki_01.webp"
+ ],
+ "face": [
+  "face_01.webp",
+  "face_02.webp",
+  "face_03.webp",
+  "face_04.webp",
+  "face_05.webp",
+  "face_06.webp"
+ ],
+ "eyes": [
+  "eyes_01.webp",
+  "eyes_02.webp",
+  "eyes_03.webp",
+  "eyes_04.webp",
+  "eyes_05.webp",
+  "eyes_06.webp",
+  "eyes_07.webp",
+  "eyes_08.webp",
+  "eyes_09.webp",
+  "eyes_10.webp"
+ ],
+ "mouth": [
+  "mouth_01.webp",
+  "mouth_02.webp",
+  "mouth_03.webp",
+  "mouth_04.webp",
+  "mouth_05.webp",
+  "mouth_06.webp",
+  "mouth_07.webp",
+  "mouth_08.webp"
+ ],
+ "hair": [
+  "hair_01.webp",
+  "hair_02.webp",
+  "hair_03.webp",
+  "hair_04.webp",
+  "hair_05.webp",
+  "hair_06.webp",
+  "hair_07.webp",
+  "hair_08.webp",
+  "hair_09.webp",
+  "hair_10.webp",
+  "hair_11.webp",
+  "hair_12.webp"
+ ],
+ "glasses": [
+  "glasses_01.webp",
+  "glasses_02.webp",
+  "glasses_03.webp",
+  "glasses_04.webp"
+ ],
+ "head": [
+  "head_01.webp",
+  "head_02.webp",
+  "head_03.webp",
+  "head_04.webp",
+  "head_05.webp",
+  "head_06.webp",
+  "head_07.webp",
+  "head_08.webp"
+ ],
+ "anchors": {
+  "kind_bear_01": {
+   "eyes": 537,
+   "mouth": 660,
+   "hat": 180
+  },
+  "kind_cat_01": {
+   "eyes": 555,
+   "mouth": 673,
+   "hat": 155
+  },
+  "kind_cat_02": {
+   "eyes": 552,
+   "mouth": 673,
+   "hat": 155
+  },
+  "kind_cat_03": {
+   "eyes": 567,
+   "mouth": 687,
+   "hat": 160
+  },
+  "kind_fox_01": {
+   "eyes": 562,
+   "mouth": 677,
+   "hat": 155
+  },
+  "kind_rabbit_01": {
+   "eyes": 587,
+   "mouth": 687,
+   "hat": 195
+  },
+  "kind_robot_01": {
+   "eyes": 609,
+   "mouth": 700,
+   "hat": 195
+  },
+  "kind_shiba_01": {
+   "eyes": 589,
+   "mouth": 713,
+   "hat": 165
+  },
+  "kind_shiba_02": {
+   "eyes": 592,
+   "mouth": 713,
+   "hat": 165
+  },
+  "kind_tanuki_01": {
+   "eyes": 609,
+   "mouth": 717,
+   "hat": 170
+  }
+ }
+}
