@@ -1,0 +1,71 @@
+{
+ "_説明": "kind_* の eyes / mouth は、その頭で目・口を置く高さ（1024 基準）。hat は帽子を下げる量。書かない頭は自動の目安を使う。head_* の animal は、人外の頭にかぶせるときだけ追加でずらす量（マイナスで上）",
+ "kind_bear_01": {
+  "eyes": 537,
+  "mouth": 660,
+  "hat": 180
+ },
+ "kind_cat_01": {
+  "eyes": 555,
+  "mouth": 673,
+  "hat": 155
+ },
+ "kind_cat_02": {
+  "eyes": 552,
+  "mouth": 673,
+  "hat": 155
+ },
+ "kind_cat_03": {
+  "eyes": 567,
+  "mouth": 687,
+  "hat": 160
+ },
+ "kind_fox_01": {
+  "eyes": 562,
+  "mouth": 677,
+  "hat": 155
+ },
+ "kind_rabbit_01": {
+  "eyes": 587,
+  "mouth": 687,
+  "hat": 195
+ },
+ "kind_robot_01": {
+  "eyes": 609,
+  "mouth": 700,
+  "hat": 195
+ },
+ "kind_shiba_01": {
+  "eyes": 589,
+  "mouth": 713,
+  "hat": 165
+ },
+ "kind_shiba_02": {
+  "eyes": 592,
+  "mouth": 713,
+  "hat": 165
+ },
+ "kind_tanuki_01": {
+  "eyes": 609,
+  "mouth": 717,
+  "hat": 170
+ },
+ "head_02": {
+  "scale": 1.2,
+  "dy": 330
+ },
+ "head_03": {
+  "dy": 50
+ },
+ "head_05": {
+  "mode": "keep"
+ },
+ "head_06": {
+  "scale": 0.8,
+  "dy": 30
+ },
+ "head_08": {
+  "scale": 1.04,
+  "dy": 45
+ }
+}

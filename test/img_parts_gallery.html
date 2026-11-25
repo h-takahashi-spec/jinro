@@ -1,0 +1,12 @@
+<!DOCTYPE html><meta charset="utf-8"><body style="margin:0;background:#fff8ec;font:12px sans-serif">
+<div id="g" style="display:grid;grid-template-columns:repeat(8,150px);gap:8px;padding:8px"></div>
+<script src="../avatar.js"></script>
+<script>
+(async()=>{await Avatar.init();
+const kinds=['img:kind_shiba_01','img:kind_shiba_02','img:kind_cat_01','img:kind_cat_03','img:kind_fox_01','img:kind_tanuki_01','img:kind_bear_01','img:kind_rabbit_01','img:kind_robot_01','img:kind_ghost_01','img:kind_spirit_01','img:kind_cat_02'];
+const cfgs=[];
+kinds.forEach((k,i)=>cfgs.push({kind:k,bg:'img:bg_0'+(i%8+1),body:'img:body_'+String(i%10+1).padStart(2,'0'),eyes:'img:eyes_0'+(i%9+1),mouth:'img:mouth_0'+(i%8+1),hair:'none',head:i%3==0?'img:head_0'+(i%8+1):'none',glasses:'none'}));
+for(let i=0;i<12;i++) cfgs.push({kind:'human',face:'img:face_0'+(i%6+1),bg:'img:bg_0'+(i%8+1),body:'img:body_'+String(i%10+1).padStart(2,'0'),eyes:'img:eyes_'+String(i%10+1).padStart(2,'0'),mouth:'img:mouth_0'+(i%8+1),hair:'img:hair_'+String(i+1).padStart(2,'0'),head:i%4==1?'img:head_0'+(i%8+1):'none',glasses:i%3==2?'img:glasses_0'+(i%4+1):'none'});
+document.getElementById('g').innerHTML=cfgs.map(c=>`<div><div style="width:150px;height:150px;border-radius:12px;overflow:hidden">${Avatar.html(c)}</div><div style="width:70px;height:70px;border-radius:50%;overflow:hidden;margin:4px auto">${Avatar.html(c,{zoom:1.35})}</div><div>${c.kind.replace('img:','')}</div></div>`).join('');
+})();
+</script>

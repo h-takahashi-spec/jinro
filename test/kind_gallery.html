@@ -1,0 +1,18 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+body{background:#f6efe2;color:#4a3b2c;font:12px sans-serif;margin:10px}
+.g{display:grid;grid-template-columns:repeat(8,1fr);gap:8px}.c{text-align:center}
+.a{width:100%;aspect-ratio:1;border-radius:10px;overflow:hidden}.r{border-radius:50%}
+h3{margin:12px 0 6px}
+</style></head><body><div id="o"></div>
+<script src="../avatar.js"></script>
+<script>
+(async()=>{await Avatar.init("../assets/avatar/");
+let h='';
+for(const o of Avatar.options('kind')){ if(o.id==='human') continue; h+=`<h3>${o.ja}</h3><div class="g">`;
+ const n=Avatar.PAL.FUR[o.id].length;
+ for(let i=0;i<n;i++){h+=`<div class="c"><div class="a">${Avatar.html({kind:o.id,furC:i,body:'none',hair:'none'})}</div>${Avatar.PAL.FUR[o.id][i].n}</div>`}
+ h+=`<div class="c"><div class="a r">${Avatar.html({kind:o.id,furC:0,body:'hoodie',eyes:'happy',mouth:'cat',head:'beret',hair:'none'},{zoom:1.35})}</div>服+帽子</div>`;
+ h+=`<div class="c"><div class="a">${Avatar.html({kind:o.id,furC:0,body:'suit',eyes:'sly',mouth:'smirk',glasses:'round',hair:'none'})}</div>スーツ</div></div>`;}
+h+='<h3>random</h3><div class="g">';for(let i=0;i<16;i++)h+=`<div class="c"><div class="a r">${Avatar.html(Avatar.random('k'+i),{zoom:1.35})}</div></div>`;h+='</div>';
+document.getElementById('o').innerHTML=h;})();
+</script></body></html>

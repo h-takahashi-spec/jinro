@@ -1,0 +1,15 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+body{background:#14100d;color:#ddd;font:12px sans-serif;margin:10px}
+.g{display:grid;grid-template-columns:repeat(8,1fr);gap:8px}.c{text-align:center}
+.a{width:100%;aspect-ratio:1;border-radius:10px;overflow:hidden}.r{border-radius:50%}
+h3{margin:14px 0 6px}
+</style></head><body><div id="o"></div>
+<script src="../avatar.js"></script>
+<script>
+(async()=>{await Avatar.init("../assets/avatar/");
+let h='<h3>random</h3><div class="g">';
+for(let i=0;i<16;i++){const c=Avatar.random("s"+i);h+=`<div class="c"><div class="a ${i%2?'r':''}">${Avatar.html(c,{zoom:i%2?1.3:1})}</div></div>`}
+h+='</div>';
+for(const L of Avatar.LAYERS){h+=`<h3>${L.ja}</h3><div class="g">`;for(const o of Avatar.options(L.k)){const c=Avatar.normalize({...Avatar.DEFAULT,[L.k]:o.id,head:L.k==='head'?o.id:'none'});h+=`<div class="c"><div class="a">${Avatar.html(c)}</div>${o.ja}</div>`}h+='</div>'}
+document.getElementById('o').innerHTML=h;})();
+</script></body></html>
