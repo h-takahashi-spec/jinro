@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>先生の画面｜人柴村 — 追手門学院大学 理工学部「コンピュータインタラクション」授業ワーク</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root { --ink: #4a3423; --ink2: #7a5a3c; --muted: #94806a; --dim: #b9a88f; --paper: #fffaf0; --paper2: #fff1d8; --line: #ecd2a6; --line2: rgba(150,110,60,.16);
+  --shiba: #f08c2e; --shiba-d: #c96a14; --honey: #ffc65c; --leaf: #58a35a; --vil: #3f7fc8; --wolf: #d2542b; --berry: #e2604f; --violet: #7f63e0;
+  --font: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "BIZ UDPGothic", "Yu Gothic UI", "Meiryo", sans-serif; --pop: cubic-bezier(.3,1.5,.5,1); }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: var(--font); font-weight: 500; color: var(--ink); min-height: 100vh; line-height: 1.6;
+  background: radial-gradient(ellipse at 50% 120%, #a7d98f 0 30%, transparent 31%), linear-gradient(180deg, #dff0ff, #fbf4e6 60%); background-attachment: fixed; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+a { color: var(--shiba-d); }
+.hidden { display: none !important; }
+.muted { color: var(--muted); }
+:focus-visible { outline: 3px solid rgba(63,127,200,.65); outline-offset: 2px; }
+header { display: flex; align-items: center; gap: 12px; padding: 10px 24px; background: rgba(255,249,238,.95); border-bottom: 2px solid var(--line); position: sticky; top: 0; z-index: 10; }
+header .logo { font-weight: 900; font-size: 19px; color: #7a4a1a; white-space: nowrap; display: flex; align-items: center; gap: 8px; }
+header .logo img { width: 30px; height: 30px; }
+#hdr { font-weight: 700; color: var(--ink2); font-size: 14px; padding: 2px 12px; border-radius: 99px; background: var(--paper2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#hdr:empty { display: none; }
+header .sp { flex: 1; }
+main { max-width: 1440px; margin: 0 auto; padding: 20px 26px 60px; }
+.card { background: var(--paper); border: 2px solid var(--line); border-radius: 22px; box-shadow: 0 5px 0 rgba(170,120,60,.16), 0 14px 30px rgba(120,80,40,.1); }
+.panel { padding: 20px 24px; margin-bottom: 18px; }
+h1 { font-weight: 900; font-size: clamp(28px, 3.2vw, 42px); margin: 0; color: var(--shiba); line-height: 1.25; text-shadow: 0 3px 0 #fff, 0 -2px 0 #fff, 3px 0 0 #fff, -3px 0 0 #fff, 0 8px 18px rgba(200,120,40,.25); }
+h2 { font-weight: 900; color: var(--shiba-d); margin: 0 0 12px; font-size: 19px; }
+.btn { border: 2px solid var(--line); background: #fff; padding: 8px 18px; border-radius: 999px; font-weight: 700; box-shadow: 0 3px 0 rgba(200,140,70,.28); text-decoration: none; color: var(--ink); display: inline-flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; transition: transform .1s, border-color .15s; }
+.btn:hover:not(:disabled) { border-color: var(--shiba); }
+.btn:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 rgba(200,140,70,.3); }
+.btn:disabled { opacity: .45; cursor: default; }
+.btn.gold { background: linear-gradient(180deg, #ffd27f, #f5a742); color: #5a3510; border-color: #f0a23b; box-shadow: 0 4px 0 #d4862a; }
+.btn.go { background: linear-gradient(180deg, #ff9b7f, #ea6f55); color: #fff; border-color: #ea6f55; box-shadow: 0 4px 0 #c4513c; }
+.btn.sv { background: linear-gradient(180deg, #b9a4ff, var(--violet)); color: #fff; border-color: var(--violet); box-shadow: 0 4px 0 #5d45b8; }
+.btn.big { font-size: 20px; padding: 14px 34px; }
+.btn.small { padding: 4px 12px; font-size: 13px; }
+input, select { background: #fff; border: 2px solid var(--line); border-radius: 12px; padding: 9px 12px; outline: none; }
+input:focus { border-color: var(--shiba); box-shadow: 0 0 0 4px rgba(255,198,92,.3); }
+.row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+details.more summary { cursor: pointer; font-weight: 700; color: var(--ink2); font-size: 14px; }
+.grid-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px 18px; margin-top: 12px; }
+.grid-form label { display: block; font-weight: 700; color: #7a4a1a; font-size: 13px; margin-bottom: 4px; }
+.grid-form input { width: 100%; }
+.spinner { width: 18px; height: 18px; border-radius: 50%; border: 3px solid rgba(160,120,70,.2); border-top-color: var(--shiba); animation: spin 1s linear infinite; display: inline-block; vertical-align: -3px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pop { from { transform: scale(.6); opacity: 0; } }
+
+/* はじめる */
+.setup { max-width: 820px; margin: 0 auto; }
+.setup .hero { text-align: center; margin: 14px 0 22px; }
+.setup .hero img { width: 120px; display: block; margin: 0 auto -6px; }
+.setup .name { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+.setup .name > div { flex: 1; min-width: 240px; } .setup .name label { display: block; font-weight: 700; color: #7a4a1a; font-size: 14px; margin-bottom: 4px; } .setup .name input { width: 100%; font-size: 17px; }
+.todo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 16px; }
+.todo div { background: #fff; border: 2px solid var(--line2); border-radius: 16px; padding: 10px 14px; font-size: 13px; color: var(--ink2); }
+.todo b { display: block; color: #7a4a1a; font-size: 15px; font-weight: 900; }
+
+/* 進行 */
+.top { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
+.flowbar { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+.flowbar .st { display: flex; align-items: center; gap: 6px; padding: 4px 14px 4px 5px; border-radius: 99px; background: rgba(255,255,255,.7); border: 2px solid transparent; color: var(--muted); font-weight: 700; font-size: 13px; }
+.flowbar .st b { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #e2d4bb; color: #fff; font-size: 12px; }
+.flowbar .st.on { border-color: var(--shiba); color: #7a4a1a; background: #fff; } .flowbar .st.on b { background: var(--shiba); }
+.flowbar .st.done b { background: var(--leaf); }
+.flowbar i { width: 22px; height: 3px; border-radius: 2px; background: rgba(255,255,255,.9); }
+#mSub { margin-top: 4px; color: var(--ink2); }
+.kpis { display: flex; gap: 12px; flex-wrap: wrap; }
+.kpi { background: #fff; border-radius: 18px; padding: 8px 18px; border: 2px solid var(--line); text-align: center; min-width: 96px; }
+.kpi b { font-size: 30px; font-weight: 900; color: #7a4a1a; display: block; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.kpi span { font-size: 12px; color: var(--muted); font-weight: 700; }
+
+/* 学生に伝えるリンク */
+.join { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 18px; align-items: stretch; margin-bottom: 18px; }
+.joincard { padding: 18px 22px; display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 20px; align-items: center; }
+.qr { width: 230px; height: 230px; border-radius: 18px; overflow: hidden; border: 3px solid #fff; box-shadow: 0 0 0 3px var(--honey), 0 8px 0 rgba(170,120,60,.16); background: #fff; cursor: zoom-in; padding: 0; display: block; }
+.qr svg { width: 100%; height: 100%; display: block; }
+.seg { display: inline-flex; background: var(--paper2); border-radius: 99px; padding: 4px; gap: 4px; }
+.seg button { border: 0; background: none; padding: 6px 16px; border-radius: 99px; font-weight: 900; color: var(--ink2); }
+.seg button.on { background: #fff; color: #7a4a1a; box-shadow: 0 2px 0 rgba(200,140,70,.3); }
+#modeBar { margin-top: 12px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+#modeBar .lab { font-weight: 900; color: #7a4a1a; font-size: 14px; }
+#modeBar .seg button { font-size: 15px; padding: 8px 18px; cursor: pointer; }
+#modeBar .seg button.on[data-jm="off"] { color: #8a5a5a; }
+#modeBar .seg button.on[data-jm="ai"] { color: #2d5a8a; }
+#modeBar .hint { font-size: 13px; color: var(--ink2); }
+#modeBar .seg button:focus-visible, .modeset button:focus-visible { outline: 3px solid #2f80ed; outline-offset: 2px; }
+.modeset { margin-top: 14px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.modeset .seg button { font-size: 15px; padding: 8px 18px; cursor: pointer; }
+.joincard .what { font-size: 14px; color: var(--ink2); margin: 10px 0 8px; }
+.joincard .u { font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; font-size: 12px; word-break: break-all; background: var(--paper2); border-radius: 12px; padding: 8px 10px; max-height: 62px; overflow: auto; color: var(--ink2); }
+.startcard { padding: 20px 24px; text-align: center; display: flex; flex-direction: column; justify-content: center; }
+.startcard .n { font-size: 17px; font-weight: 900; }
+.startcard .sv { margin-top: 16px; padding-top: 14px; border-top: 2px dashed var(--line2); }
+#qrBig { position: fixed; inset: 0; z-index: 100; background: rgba(60,40,20,.75); display: grid; place-items: center; padding: 20px; cursor: zoom-out; }
+#qrBig .box { background: #fff; border-radius: 28px; padding: 26px 30px; text-align: center; max-height: 100%; }
+#qrBig .box svg { width: min(72vh, 86vw); height: min(72vh, 86vw); display: block; margin: 0 auto; }
+#qrBig .t { font-size: clamp(20px, 3vw, 34px); font-weight: 900; color: #7a4a1a; margin-top: 8px; }
+
+/* エントリーした人 */
+.ents { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 12px; }
+.ent { text-align: center; position: relative; background: #fff; border-radius: 16px; padding: 10px 6px 8px; border: 2px solid var(--line2); }
+.ent.new { animation: pop .4s var(--pop) both; }
+.ent .av { width: 68px; height: 68px; border-radius: 50%; overflow: hidden; margin: 0 auto; border: 3px solid #fff; box-shadow: 0 2px 8px rgba(90,60,30,.25); }
+.ent .n { font-weight: 900; font-size: 13px; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ent .sid { font-size: 10.5px; color: var(--dim); }
+.ent .dot { position: absolute; left: 8px; top: 8px; width: 10px; height: 10px; border-radius: 50%; background: var(--leaf); box-shadow: 0 0 0 3px #fff; }
+.ent.off { opacity: .5; } .ent.off .dot { background: #c9b9a0; }
+.ent .md { position: absolute; right: 6px; top: 4px; font-size: 15px; }
+.ent .x { position: absolute; right: 2px; bottom: 2px; border: 0; background: none; color: var(--dim); font-size: 13px; opacity: 0; }
+.ent:hover .x, .ent .x:focus-visible { opacity: 1; }
+.empty { text-align: center; color: var(--muted); padding: 22px 0; }
+
+/* 村 */
+.vills { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 18px; }
+.vill { padding: 16px 18px; }
+.vill .tp { display: flex; align-items: center; gap: 10px; }
+.vill .nm { font-weight: 900; font-size: 19px; flex: 1; }
+.chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 99px; font-size: 12px; font-weight: 900; background: var(--paper2); border: 1.5px solid var(--line); color: var(--ink2); white-space: nowrap; }
+.chip.vil { color: var(--vil); border-color: #9cc3f0; background: #eef5ff; } .chip.wolf { color: var(--wolf); border-color: #f2a27a; background: #fff1ea; }
+.chip.hl { color: #b8661c; border-color: #f0a23b; background: #fff1d6; }
+.pls { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 8px; }
+.pl { width: 62px; text-align: center; position: relative; }
+.pl .av { width: 48px; height: 48px; border-radius: 50%; overflow: hidden; margin: 0 auto; border: 3px solid #fff; box-shadow: 0 2px 6px rgba(90,60,30,.25); }
+.pl .n { font-size: 10.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pl.dead .av { filter: grayscale(.9) opacity(.6); }
+.pl.away .av { opacity: .5; }
+.pl .tg { position: absolute; top: -4px; right: 0; font-size: 12px; }
+.pl .role { font-size: 10px; font-weight: 900; }
+.pl .role.wolf { color: var(--wolf); } .pl .role.vil { color: var(--vil); }
+.ana { background: var(--paper2); border-radius: 14px; padding: 12px 14px; margin-top: 10px; font-size: 14px; line-height: 1.8; }
+.ana .tt { font-weight: 900; font-size: 17px; color: #7a4a1a; }
+.ana ul { margin: 6px 0 0; padding-left: 20px; }
+.best { display: grid; grid-template-columns: 1fr auto; gap: 18px; align-items: center; background: linear-gradient(135deg, #fff4dc, #ffe2b8); border: 3px solid #f0a23b; }
+.best .crown { font-size: 46px; line-height: 1; }
+.again { text-align: center; }
+.bracket { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 6px; align-items: stretch; }
+.bcol { min-width: 190px; flex: 1; background: #fff; border-radius: 18px; border: 2px solid var(--line2); padding: 10px 12px; }
+.bcol.cur { border-color: #8d72e8; box-shadow: 0 0 0 4px rgba(141,114,232,.15); }
+.bcol h3 { margin: 0 0 8px; font-size: 15px; font-weight: 900; color: #6a4fc9; display: flex; justify-content: space-between; }
+.bcol .faces { display: flex; flex-wrap: wrap; gap: 5px; }
+.bf { width: 40px; text-align: center; } .bf .av { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; margin: 0 auto; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(90,60,30,.25); }
+.bf .n { font-size: 9px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .bf.out { opacity: .35; filter: grayscale(.8); } .bf.adv .av { border-color: #8d72e8; }
+.champ { text-align: center; padding: 26px 20px; background: linear-gradient(135deg, #f3edff, #ffe9c9); border: 3px solid #8d72e8; }
+.champ .who { display: flex; justify-content: center; gap: 22px; flex-wrap: wrap; margin: 14px 0; }
+.champ .who .av { width: 120px; height: 120px; border-radius: 50%; overflow: hidden; border: 5px solid #ffd27f; box-shadow: 0 6px 20px rgba(120,80,40,.3); margin: 0 auto; animation: pop .6s var(--pop) both; }
+.champ .who .n { font-size: 22px; font-weight: 900; margin-top: 6px; }
+#toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); z-index: 200; background: #fff; border: 2px solid var(--berry); padding: 10px 18px; border-radius: 14px; font-weight: 700; box-shadow: 0 8px 24px rgba(120,60,40,.3); max-width: calc(100% - 24px); }
+#toast.ok { border-color: var(--leaf); }
+#net { position: fixed; left: 50%; top: 8px; transform: translateX(-50%); z-index: 250; background: #fff3ef; border: 2px solid var(--berry); color: #a23a2c; font-weight: 700; font-size: 13px; padding: 5px 16px; border-radius: 99px; }
+footer { text-align: center; font-size: 12px; color: var(--muted); padding: 0 10px 26px; }
+@media (max-width: 980px) { .join { grid-template-columns: 1fr; } .todo { grid-template-columns: 1fr; } }
+@media (max-width: 620px) { main { padding: 14px 12px 40px; } .joincard { grid-template-columns: 1fr; justify-items: center; text-align: center; } .vills { grid-template-columns: 1fr; } header { padding: 8px 12px; } .best { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><span id="logoMark">🐕</span>人柴村 先生の画面</div>
+  <span id="hdr"></span>
+  <span class="sp"></span>
+  <a class="btn small" id="toResults" href="results.html" target="_blank" rel="noopener">📊 分析ページ</a>
+  <button class="btn small hidden" id="btnSwitch">べつの授業にする</button>
+</header>
+<main>
+  <!-- 授業をはじめる -->
+  <section id="vSetup" class="hidden setup">
+    <div class="hero"><h1>人柴村をはじめよう</h1></div>
+    <div class="card panel" id="noApi" style="border-color:var(--berry)">
+      <h2>サーバーの場所がわかりません</h2>
+      <p style="margin:0">このページは、Apps Script の URL を付けて開いてください（例: <code>teacher.html?api=https://script.google.com/macros/s/…/exec</code>）。一度開けば、このブラウザが覚えます。</p>
+    </div>
+    <div class="card panel">
+      <h2>今日の授業</h2>
+      <div class="name"><div><label for="sName">授業の名前（学生の画面にも出ます）</label><input id="sName" maxlength="30" value="コンピュータインタラクション"></div>
+        <button class="btn gold big" id="btnCreate">受付をはじめる</button></div>
+      <div class="modeset"><b style="color:#7a4a1a">学生の参加のしかた</b><div class="seg" id="sMode" role="radiogroup" aria-label="学生の参加のしかた"><button type="button" data-m="human">🙋 人間モード</button><button type="button" data-m="ai">🧠 AIモード</button></div>
+        <span class="muted" style="font-size:13px">あとから、授業中にいつでも切りかえられます。</span></div>
+      <details class="more" style="margin-top:14px"><summary>時間をかえる（ふつうはこのままで大丈夫です）</summary>
+        <div class="grid-form">
+          <div><label for="sTalk">発言の時間（秒／1ラウンド）</label><input id="sTalk" type="number" value="60" min="10" max="600"></div>
+          <div><label for="sRounds">1日の発言ラウンド数</label><input id="sRounds" type="number" value="3" min="1" max="6"></div>
+          <div><label for="sVote">投票・夜の時間（秒）</label><input id="sVote" type="number" value="30" min="10" max="600"></div>
+          <div><label for="sCode">先生用コード（設定している場合だけ）</label><input id="sCode" type="password" placeholder="なし" autocomplete="off"></div>
+        </div>
+        <p class="muted" style="font-size:13px;margin:10px 0 0">この設定だと、1試合はおよそ 10〜15 分です。全員が行動を終えると、時間を待たずに次へ進みます。</p>
+      </details>
+      <div class="todo">
+        <div><b>① 受付</b>学生に QR コードかリンクを見せます。学生は名前とアバターを登録します。</div>
+        <div><b>② 試合</b>ボタンひとつで、6〜9人の村に自動で分かれて始まります。</div>
+        <div><b>③ 結果発表</b>全部の村が終わると、分析とベストゲームのリプレイが出ます。何試合でも続けられます。</div>
+      </div>
+    </div>
+    <div class="card panel" id="pastBox"><h2>つづきから（このブラウザで作った授業）</h2><div id="past"></div></div>
+  </section>
+
+  <!-- 進行 -->
+  <section id="vMain" class="hidden">
+    <div class="top">
+      <div><div class="flowbar" id="flow"></div><h1 id="mTitle"></h1><div id="mSub"></div><div id="modeBar"></div></div>
+      <div class="kpis" id="kpis"></div>
+    </div>
+    <div id="mBody"></div>
+  </section>
+</main>
+<footer>🐾 人柴村 ・ 追手門学院大学 理工学部「コンピュータインタラクション」授業ワーク</footer>
+<div id="qrBig" class="hidden"></div>
+<div id="net" class="hidden">通信がとぎれています。つなぎ直しています…</div>
+<div id="toast" class="hidden" role="status"></div>
+
+<script src="config.js"></script>
+<script src="avatar.js"></script>
+<script src="qr.js"></script>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const store = { get(k, d) { try { const v = localStorage.getItem("jinro_" + k); return v === null ? d : JSON.parse(v); } catch { return d; } }, set(k, v) { try { localStorage.setItem("jinro_" + k, JSON.stringify(v)); } catch { } } };
+const params = new URLSearchParams(location.search);
+if (params.get("api")) store.set("api", params.get("api"));
+const API = (params.get("api") || (window.JINRO_API || "").trim() || store.get("api", ""));
+const ROLE_JA = { WEREWOLF: "柴犬", POSSESSED: "柴推し", SEER: "占い師", MEDIUM: "霊媒師", BODYGUARD: "騎士", VILLAGER: "村人" };
+const TEAM = r => r === "WEREWOLF" || r === "POSSESSED" ? "wolf" : "vil";
+const PHASE = { lobby: "準備中", talk: "昼の話し合い", vote: "投票", night: "夜", end: "終了" };
+
+/** サーバーを呼ぶ。通信の失敗は e.net = true で区別する */
+async function call(action, p = {}, { timeout = 40000, retry = 0 } = {}) {
+  if (!API) throw new Error("サーバーの URL が設定されていません。config.js に Apps Script の URL を書いてください。");
+  for (let i = 0; ; i++) {
+    const ctl = new AbortController(), tm = setTimeout(() => ctl.abort(), timeout);
+    try {
+      const r = await fetch(API, { method: "POST", body: JSON.stringify({ action, ...p }), signal: ctl.signal });
+      const text = await r.text();
+      let j; try { j = JSON.parse(text); } catch { throw Object.assign(new Error("サーバーが混み合っています。少し待ってください"), { net: true }); }
+      if (!j.ok) throw new Error(j.error || "エラーが起きました");
+      return j;
+    } catch (e) {
+      if (e.name === "AbortError" || e instanceof TypeError) e = Object.assign(new Error("通信できませんでした"), { net: true });
+      if (e.net && i < retry) { await sleep(800 * (i + 1)); continue; }
+      throw e;
+    } finally { clearTimeout(tm); }
+  }
+}
+function toast(m, ok) { const t = $("toast"); t.textContent = m; t.className = ok ? "ok" : ""; clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.add("hidden"), 4000); }
+async function guard(btn, fn) { if (btn.disabled) return; btn.disabled = true; try { await fn(); } catch (e) { toast(e.message); } finally { if (btn.isConnected) btn.disabled = false; } }
+function link(page, q) { const u = new URL(page, location.href); const cfg = (window.JINRO_API || "").trim(); u.search = new URLSearchParams({ ...(API && API !== cfg ? { api: API } : {}), ...q }).toString(); return u.href; }
+function av(p, zoom = 1.35) { try { return Avatar.html(p.avatar || Avatar.random("e:" + (p.nick || p.name)), { zoom }); } catch { return ""; } }
+function groupSizes(n) { if (n <= 0) return []; const k = Math.ceil(n / 9), b = Math.floor(n / k), r = n % k; return [...Array(k)].map((_, i) => b + (i < r ? 1 : 0)); }
+const sizesText = sizes => sizes.map(n => Math.max(6, n) + "人" + (n < 6 ? `（うち CPU ${6 - n}）` : "")).join("・");
+
+let SID = params.get("session") || store.get("teacher_current", null), KEY = null, ST = null, timer = null, analyzing = false, busy = false, fails = 0, joinMode = "human";
+function sessions() { return store.get("teacher_sessions", []); }
+function keyFor(id) { const s = sessions().find(x => x.id === id); return s && s.adminKey; }
+
+// ---------- 授業をはじめる ----------
+function showSetup() {
+  clearTimeout(timer); SID = null; ST = null;
+  $("vSetup").classList.remove("hidden"); $("vMain").classList.add("hidden"); $("hdr").textContent = ""; $("btnSwitch").classList.add("hidden");
+  $("noApi").classList.toggle("hidden", !!API); $("btnCreate").disabled = !API;
+  const past = sessions().slice(-8).reverse();
+  $("pastBox").classList.toggle("hidden", !past.length);
+  $("past").innerHTML = past.map(s => `<div class="row" style="margin:6px 0"><b>${esc(s.name)}</b><span class="muted" style="font-size:13px">${new Date(s.at).toLocaleString("ja-JP", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" })}</span><button class="btn small" data-open="${esc(s.id)}">開く</button></div>`).join("");
+  $("past").querySelectorAll("[data-open]").forEach(b => b.onclick = () => openSession(b.dataset.open));
+}
+$("btnCreate").onclick = e => guard(e.currentTarget, async () => {
+  const name = $("sName").value.trim() || "コンピュータインタラクション";
+  const r = await call("createSession", { name, joinMode: setupMode, talkSec: +$("sTalk").value, talkRounds: +$("sRounds").value, voteSec: +$("sVote").value, nightSec: +$("sVote").value, teacherCode: $("sCode").value });
+  store.set("teacher_sessions", [...sessions(), { id: r.sessionId, adminKey: r.adminKey, name, at: Date.now() }].slice(-30));
+  openSession(r.sessionId);
+});
+let setupMode = store.get("teacher_mode", "human") === "ai" ? "ai" : "human";
+function paintSetupMode() { $("sMode").querySelectorAll("button").forEach(b => { b.classList.toggle("on", b.dataset.m === setupMode); b.setAttribute("aria-checked", b.dataset.m === setupMode); }); }
+$("sMode").querySelectorAll("button").forEach(b => b.onclick = () => { setupMode = b.dataset.m; store.set("teacher_mode", setupMode); paintSetupMode(); });
+paintSetupMode();
+$("btnSwitch").onclick = () => { store.set("teacher_current", null); showSetup(); };
+function openSession(id) {
+  SID = id; KEY = keyFor(id);
+  if (!KEY) { toast("このブラウザには、この授業の先生用キーがありません"); return showSetup(); }
+  store.set("teacher_current", id);
+  $("vSetup").classList.add("hidden"); $("vMain").classList.remove("hidden"); $("btnSwitch").classList.remove("hidden");
+  $("mTitle").textContent = "読みこんでいます…"; $("mBody").innerHTML = ""; lastKey = "";
+  poll();
+}
+
+// ---------- 進行（同時に 2 本走らせない・失敗したら間隔をあけてやり直す） ----------
+async function poll() {
+  clearTimeout(timer);
+  if (!SID || busy) return;
+  busy = true; const sid = SID; let delay = 3000;
+  try {
+    const r = await call("sessionState", { sessionId: sid, adminKey: KEY });
+    if (sid !== SID) return;
+    fails = 0; $("net").classList.add("hidden");
+    ST = r; render();
+    if (ST.session.status === "results") autoAnalyze();
+    delay = ST.session.status === "running" ? 2500 : ST.session.status === "closed" ? 15000 : 3500;
+  } catch (e) {
+    if (sid !== SID) return;
+    if (e.net) { fails++; if (fails >= 2) $("net").classList.remove("hidden"); delay = Math.min(15000, 2000 * fails); }
+    else { toast(e.message); delay = 6000; if (/見つかりません|キーが違/.test(e.message)) { store.set("teacher_current", null); return showSetup(); } }
+  } finally { busy = false; }
+  if (sid === SID) timer = setTimeout(poll, delay);
+}
+document.addEventListener("visibilitychange", () => { if (!document.hidden && SID) poll(); });
+async function act(fn) { try { await fn(); } catch (e) { toast(e.message); } clearTimeout(timer); lastKey = ""; if (busy) { await sleep(400); } poll(); }
+
+let lastKey = "";
+function render() {
+  const ses = ST.session, ents = ses.entrants, online = ents.filter(e => e.online);
+  $("hdr").textContent = ses.name;
+  const stepNo = ses.status === "entry" ? 1 : ses.status === "running" ? 2 : 3;
+  $("flow").innerHTML = ["受付", "試合", "結果発表"].map((n, i) => `${i ? "<i></i>" : ""}<div class="st ${i + 1 === stepNo ? "on" : i + 1 < stepNo ? "done" : ""}"><b>${i + 1 < stepNo ? "✓" : i + 1}</b>${n}</div>`).join("");
+  $("kpis").innerHTML = `<div class="kpi"><b>${ents.length}</b><span>エントリー</span></div><div class="kpi"><b>${online.length}</b><span>いま参加中</span></div>
+    ${!ses.joinMode && ents.some(e => e.mode === "ai") ? `<div class="kpi"><b>${ents.filter(e => e.mode === "ai").length}</b><span>🧠 AIモード</span></div>` : ""}<div class="kpi"><b>${ses.round}</b><span>試合目</span></div>`;
+  renderModeBar(ses);
+  const sizes = groupSizes(online.length);
+  if (ses.status === "entry") return renderEntry(ses, online, sizes);
+  if (ses.status === "running") return renderRunning(ses);
+  if (ses.status === "results") return renderResults(ses, online, sizes);
+  $("mTitle").textContent = "今日の授業はおわりました"; $("mSub").textContent = "おつかれさまでした。";
+  setBody("closed", `<div class="card panel"><div class="row"><a class="btn gold" href="${link("results.html", {})}" target="_blank" rel="noopener">📊 分析ページで全体をふりかえる</a><button class="btn" id="btnNew">新しい授業をはじめる</button></div></div>`, () => { $("btnNew").onclick = () => { store.set("teacher_current", null); showSetup(); }; });
+}
+/** 中身が変わったときだけ描きなおす（操作中のボタンが消えないように） */
+function setBody(key, html, bind) {
+  if (key === lastKey && $("mBody")._html === html) return;
+  lastKey = key; $("mBody")._html = html; $("mBody").innerHTML = html; bind && bind();
+}
+const SEEN = new Set();
+function entrantsGrid(ents) {
+  return ents.length ? `<div class="ents">${ents.map(e => `<div class="ent ${e.online ? "" : "off"} ${SEEN.has(e.eid) ? "" : "new"}" title="${esc(e.profile || "")}"><span class="dot"></span><span class="md">${e.mode === "ai" ? "🧠" : ""}</span>
+    <div class="av">${av(e)}</div><div class="n">${esc(e.nick)}</div><div class="sid">${esc(e.sid || "")}</div><button class="x" data-rm="${e.eid}" title="この人を外す" aria-label="${esc(e.nick)}を外す">✕</button></div>`).join("")}</div>`
+    : '<div class="empty">まだだれもいません。学生に、上の QR コードかリンクを見せてください。</div>';
+}
+function bindRemove() { $("mBody").querySelectorAll("[data-rm]").forEach(b => b.onclick = () => { if (confirm("この参加者を外しますか？")) act(() => call("updateSession", { sessionId: SID, adminKey: KEY, removeEid: +b.dataset.rm })); }); }
+// 学生用のリンクは毎回同じ（index.html だけ）。開いている授業は自動で見つかり、モードは学生が画面で選ぶ
+function joinUrl() { return link("index.html", {}); }
+function qrSvg(u) { try { return QR.svg(u); } catch { return '<div class="empty">QR を作れませんでした</div>'; } }
+// 学生の参加のしかた（先生が決める）。学生の画面は、これに合わせて自動で切りかわる
+const JM = { off: ["⏸ 受付しない", "学生の画面は「先生の合図を待っています」のまま。新しいエントリーも受けつけません。"],
+  human: ["🙋 人間モード", "学生は自分で話し合い・投票します。"],
+  ai: ["🧠 AIモード", "学生はAIの性格と作戦を決めて、AIサバイバル戦（勝ち抜き戦）で戦わせます。待機中の学生には、AIの設定画面が自動で出ます。"] };
+function joinModeOf(ses) { return ses.joinMode || "mixed"; }
+function renderModeBar(ses) {
+  const bar = $("modeBar"), jm = joinModeOf(ses);
+  if (ses.status === "closed" || jm === "mixed") { bar.innerHTML = ""; bar._k = ""; return; }
+  const k = jm + "|" + ses.status; if (bar._k === k) return; bar._k = k;
+  bar.innerHTML = `<span class="lab">学生の参加のしかた</span><div class="seg" role="radiogroup" aria-label="学生の参加のしかた">${Object.keys(JM).map(m => `<button type="button" role="radio" aria-checked="${m === jm}" data-jm="${m}" class="${m === jm ? "on" : ""}">${JM[m][0]}</button>`).join("")}</div>
+    <span class="hint">${JM[jm][1]}${ses.status === "running" && jm !== "off" ? "（切りかえは次の試合から）" : ""}</span>`;
+  bar.querySelectorAll("[data-jm]").forEach(b => b.onclick = () => { if (b.dataset.jm === jm) return; act(() => call("updateSession", { sessionId: SID, adminKey: KEY, joinMode: b.dataset.jm })); });
+}
+function renderEntry(ses, online, sizes) {
+  $("mTitle").textContent = "受付中";
+  $("mSub").textContent = "学生に QR コード（またはリンク）を見せてください。人数がそろったら「村をつくってはじめる」を押します。";
+  const u = joinUrl();
+  const html = `<div class="join">
+      <div class="card joincard"><button class="qr" id="qr" title="押すと大きく映します">${qrSvg(u)}</button>
+        <div><div class="what"><b>このリンクは毎回同じです。</b>LMS に貼っておけば、授業のたびに配りなおす必要はありません。<br>学生は、上で選んだモードで参加します。できるだけパソコンで開くよう伝えてください。</div>
+          <div class="u">${esc(u)}</div>
+          <div class="row" style="margin-top:10px"><button class="btn small gold" data-copy="${esc(u)}">リンクをコピー</button><button class="btn small" id="qrZoom">QR を大きく映す</button></div></div></div>
+      <div class="card startcard">
+        <div class="n">${online.length ? `いまの ${online.length} 人で、${sizes.length} つの村ができます` : "学生が入るのを待っています"}</div>
+        <div class="muted" style="font-size:13px;margin:2px 0 14px">${online.length ? sizesText(sizes) + "。足りない席は CPU が座るので、だれも外れません。" : "エントリーした人が、下にならびます。"}</div>
+        ${ses.joinMode === "ai" ? "" : `<div><button class="btn go big" id="btnStart" ${online.length && ses.joinMode !== "off" ? "" : "disabled"}>🔔 村をつくってはじめる</button></div>`}${ses.joinMode === "off" ? '<div class="muted" style="font-size:13px;margin-top:8px">いまは「受付しない」です。上で人間モードかAIモードを選ぶと、はじめられます。</div>' : ""}
+        ${survivalStartHTML(online)}
+      </div></div>
+    <div class="card panel"><h2>エントリーした人（緑の点 = いま画面を開いている）</h2>${entrantsGrid(ses.entrants)}</div>`;
+  setBody("entry|" + ses.joinMode, html, () => {
+    $("mBody").querySelectorAll("[data-copy]").forEach(b => b.onclick = async () => { try { await navigator.clipboard.writeText(b.dataset.copy); toast("リンクをコピーしました", true); } catch { prompt("このリンクをコピーしてください", b.dataset.copy); } });
+    $("qr").onclick = $("qrZoom").onclick = showBigQr;
+    bindRemove(); bindSurvival();
+    if ($("btnStart")) $("btnStart").onclick = e => guard(e.currentTarget, () => startRound());
+  });
+  ses.entrants.forEach(e => SEEN.add(e.eid));
+}
+function showBigQr() {
+  const b = $("qrBig");
+  b.innerHTML = `<div class="box">${qrSvg(joinUrl())}<div class="t">🐕 人柴村：カメラで読みとって参加しよう</div></div>`;
+  b.classList.remove("hidden");
+}
+$("qrBig").onclick = () => $("qrBig").classList.add("hidden");
+document.addEventListener("keydown", e => { if (e.key === "Escape") $("qrBig").classList.add("hidden"); });
+async function startRound(survival) {
+  const r = await call("startRound", { sessionId: SID, adminKey: KEY, ...(survival ? { survival } : {}) });
+  toast(r.survival ? `🏆 ${r.survival.final ? "決勝" : r.survival.stage + "回戦"}が ${r.rooms.length} つの村で始まりました！` : `${r.rooms.length} つの村で試合が始まりました！`, true);
+  clearTimeout(timer); lastKey = ""; if (busy) await sleep(400); poll();
+}
+// ---------- AI サバイバル戦 ----------
+function survivalStartHTML(online, again) {
+  const ai = online.filter(e => e.mode === "ai").length;
+  if (ST.session.joinMode && ST.session.joinMode !== "ai") return "";   // 人間モードのときは出さない
+  if (ai < 2) return ST.session.joinMode === "ai" ? `<div class="muted" style="font-size:13px;margin-top:8px">AIサバイバル戦は、画面を開いている学生が2人以上で始められます。</div>` : "";
+  return `<div class="sv"><div style="font-weight:900">🏆 AIサバイバル戦（${ai} 人のAIで勝ち抜き戦）</div>
+    <div class="muted" style="margin:2px 0 10px;font-size:13px">${again ? "全員のAIが、もう一度1回戦から戦います。学生は待機所の「AIの性格を変える」で、いまのうちにAIを組みなおせます（1〜2分あげてください）。" : "勝ったチームで最後まで生き残ったAIだけが、次の回へ進みます。残りが1村になった回が決勝です。"}</div>
+    <button class="btn sv big" data-sv="start">🏆 ${again ? "AIを組みなおして、もう一度サバイバル戦" : "AIサバイバル戦をはじめる"}</button></div>`;
+}
+function bindSurvival() { $("mBody").querySelectorAll("[data-sv]").forEach(b => b.onclick = e => guard(e.currentTarget, () => startRound(b.dataset.sv))); }
+const entById = () => Object.fromEntries(ST.session.entrants.map(e => [e.eid, e]));
+function bracketHTML(sv) {
+  const E = entById();
+  const face = (id, cls) => { const e = E[id] || { nick: "?" }; return `<div class="bf ${cls}" title="${esc(e.nick)}"><div class="av">${av(e, 1.3)}</div><div class="n">${esc(e.nick)}</div></div>`; };
+  const cols = sv.history.map((h, i) => {
+    const adv = new Set(h.advanced || []);
+    const list = h.advanced ? [...h.entrants].sort((a, b) => adv.has(b) - adv.has(a)) : h.entrants;
+    return `<div class="bcol ${i === sv.history.length - 1 && !sv.done ? "cur" : ""}"><h3><span>${h.final ? "決勝" : h.stage + "回戦"}</span><span class="muted" style="font-size:12px">${h.entrants.length}人${h.advanced ? ` → ${adv.size}人` : " ・ 試合中"}</span></h3>
+      <div class="faces">${list.map(id => face(id, h.advanced ? (adv.has(id) ? "adv" : "out") : "")).join("")}</div></div>`;
+  }).join("");
+  const champ = sv.done ? `<div class="bcol cur" style="max-width:240px"><h3><span>👑 優勝</span></h3><div class="faces">${(sv.champions || []).map(id => face(id, "adv")).join("") || '<span class="muted">なし</span>'}</div></div>` : "";
+  return `<div class="card panel"><h2>🏆 AIサバイバル戦のトーナメント表</h2><div class="bracket">${cols}${champ}</div>
+    <p class="muted" style="font-size:12px;margin:8px 0 0">紫のふち = 勝ち上がり、うすい顔 = 脱落。</p></div>`;
+}
+function championHTML(sv) {
+  const E = entById(), ch = sv.champions || [];
+  return `<div class="card panel champ">${IMG.mascot_cheer ? `<img src="${IMG.mascot_cheer}" alt="" style="width:110px;float:right;margin:-10px 0 -20px">` : ""}<div style="font-size:15px;font-weight:900;color:#6a4fc9">AIサバイバル戦 ・ 優勝</div>
+    <div style="font-size:34px;font-weight:900;color:var(--shiba);text-shadow:0 3px 0 #fff">👑 最後まで生き残ったAI</div>
+    <div class="who">${ch.map(id => { const e = E[id] || { nick: "?" }; return `<div style="width:180px"><div class="av">${av(e, 1.35)}</div><div class="n">${esc(e.nick)}</div>${e.profile ? `<div class="muted" style="font-size:12px">${esc(e.profile)}</div>` : ""}</div>`; }).join("") || '<div class="muted">今回は、生き残ったAIがいませんでした</div>'}</div>
+    <div class="muted">優勝したAIの性格と作戦は、決勝の村の「くわしい分析」で見られます。</div></div>`;
+}
+function villCard(r, withResult) {
+  const done = r.status === "finished";
+  const left = r.deadline ? Math.max(0, Math.round((r.deadline - ST.now) / 1000)) : 0;
+  return `<div class="card vill"><div class="tp"><div class="nm">${esc(r.name)}</div>
+      ${done ? `<span class="chip ${r.winner === "VILLAGER" ? "vil" : "wolf"}">${r.winner === "VILLAGER" ? "🏡 村人チームの勝ち" : "🐕 柴犬チームの勝ち"}</span>` : `<span class="chip">${r.day}日目 ・ ${PHASE[r.phase] || ""}${r.phase === "talk" ? ` ${r.round}回目` : ""} ・ あと${left}秒</span>`}</div>
+    <div class="pls">${r.players.map(p => `<div class="pl ${p.alive ? "" : "dead"} ${p.away ? "away" : ""}"><span class="tg">${p.kind === "ai" ? "🧠" : p.kind === "cpu" ? "⚙️" : p.away ? "💤" : ""}</span><div class="av">${av(p)}</div><div class="n">${esc(p.name)}</div>${p.role ? `<div class="role ${TEAM(p.role)}">${ROLE_JA[p.role]}</div>` : ""}</div>`).join("")}</div>
+    ${withResult ? analysisHTML(r) : ""}
+    <div class="row" style="margin-top:10px">${done ? `<a class="btn gold small" href="${link("index.html", { replay: r.id })}" target="_blank" rel="noopener">▶ リプレイを見る</a><a class="btn small" href="${link("results.html", { game: r.id })}" target="_blank" rel="noopener">📊 くわしい分析</a>` : `<a class="btn small" href="${link("index.html", { room: r.id, free: 1 })}" target="_blank" rel="noopener">👀 この村をのぞく</a>`}</div></div>`;
+}
+function analysisHTML(r) {
+  const a = r.analysis;
+  if (!a) return `<div class="ana"><span class="spinner"></span> 試合をふりかえっています…</div>`;
+  return `<div class="ana"><div class="tt">「${esc(a.title || "")}」</div><div>${esc(a.summary || "")}</div>
+    ${a.mvp ? `<div style="margin-top:6px">🏅 <b>MVP: ${esc(a.mvp.name)}</b> — ${esc(a.mvp.reason || "")}</div>` : ""}
+    ${a.turning ? `<div>🔀 <b>分かれ目（${esc(a.turning.day)}日目）</b> ${esc(a.turning.text || "")}</div>` : ""}
+    ${a.highlights && a.highlights.length ? `<ul>${a.highlights.map(h => `<li>${esc(h)}</li>`).join("")}</ul>` : ""}
+    <div class="muted" style="font-size:11px;margin-top:4px">${a.by === "llm" ? "GPT による分析" : "自動のまとめ（API キーを設定すると GPT が分析します）"}</div></div>`;
+}
+function renderRunning(ses) {
+  const n = ST.rooms.length, d = ST.rooms.filter(r => r.status === "finished").length;
+  const sv = ses.survival, h = sv && sv.history[sv.history.length - 1];
+  $("mTitle").textContent = sv && h ? `🏆 AIサバイバル戦 ・ ${h.final ? "決勝" : h.stage + "回戦"}` : `第${ses.round}試合 ・ 試合中`;
+  $("mSub").textContent = `${n} つの村のうち、${d} つが終わりました。全部終わると、自動で結果発表に変わります。`;
+  setBody("running", `${sv ? bracketHTML(sv) : ""}<div class="vills">${ST.rooms.map(r => villCard(r, false)).join("")}</div>
+    <p class="muted" style="margin-top:14px;font-size:13px">💤 = 画面を閉じている人（自動で行動します）　🧠 = AIモード　⚙️ = CPU</p>`);
+}
+function renderResults(ses, online, sizes) {
+  const rooms = ST.rooms, best = rooms.slice().sort((a, b) => ((b.score || {}).score || 0) - ((a.score || {}).score || 0))[0];
+  const sv = ses.survival, h = sv && sv.history[sv.history.length - 1];
+  $("mTitle").textContent = sv && h ? (sv.done ? "🏆 AIサバイバル戦 ・ 優勝決定！" : `🏆 AIサバイバル戦 ・ ${h.stage}回戦の結果`) : `第${ses.round}試合の結果発表`;
+  $("mSub").textContent = "各村のふりかえりと、いちばん盛り上がった試合のリプレイです。";
+  const adv = h ? (h.advanced || []).length : 0;
+  const svNext = sv && !sv.done ? `<div class="card panel again"><div style="font-size:20px;font-weight:900">${adv} 人のAIが勝ち上がりました！</div>
+      <div class="muted" style="margin:4px 0 12px">役をふり直して、${adv <= 9 ? "いよいよ決勝です" : "次の回を始めます"}。</div><button class="btn sv big" data-sv="next">🏆 ${adv <= 9 ? "決勝へ" : (h.stage + 1) + "回戦へ"}</button></div>` : "";
+  const html = `${sv && sv.done ? championHTML(sv) : ""}${sv ? bracketHTML(sv) : ""}${svNext}${best && rooms.length > 1 ? `<div class="card panel best"><div><div class="row"><span class="crown">👑</span><div><div class="muted" style="font-weight:900">今回のベストゲーム</div>
+      <div style="font-size:24px;font-weight:900">${esc(best.name)}　${best.analysis && best.analysis.title ? "「" + esc(best.analysis.title) + "」" : ""}</div></div></div>
+      <div class="row" style="margin-top:8px">${((best.score || {}).badges || []).map(b => `<span class="chip hl">${esc(b)}</span>`).join("")}</div></div>
+      <a class="btn gold big" href="${link("index.html", { replay: best.id })}" target="_blank" rel="noopener">▶ みんなで観る</a></div>` : ""}
+    <div class="vills">${rooms.map(r => villCard(r, true)).join("")}</div>
+    ${ses.joinMode === "ai" ? `<div class="card panel again" style="margin-top:18px">
+      ${!sv || sv.done ? survivalStartHTML(online, !!sv) : ""}
+      <div class="row" style="justify-content:center;margin-top:12px"><button class="btn" id="btnReopen">受付にもどる（QR を出す）</button><button class="btn" id="btnClose">授業をおわる</button></div></div>` :
+    `<div class="card panel again" style="margin-top:18px">
+      <div style="font-size:18px;font-weight:900">${online.length ? `もう一回：いまの ${online.length} 人で、村を組みなおします（${sizesText(sizes)}）` : "いま画面を開いている学生がいません"}</div>
+      <div class="muted" style="margin:4px 0 14px;font-size:13px">あとからエントリーした人も入ります。画面を閉じている人は外れます。</div>
+      <div class="row" style="justify-content:center"><button class="btn go big" id="btnRetry" ${online.length && ses.joinMode !== "off" ? "" : "disabled"}>🔁 もう一回</button>
+        <button class="btn" id="btnReopen">受付にもどる（QR を出す）</button><button class="btn" id="btnClose">授業をおわる</button></div>
+      ${!sv || sv.done ? survivalStartHTML(online) : ""}</div>`}`;
+  setBody("results", html, () => {
+    if ($("btnRetry")) $("btnRetry").onclick = e => guard(e.currentTarget, () => startRound());
+    bindSurvival();
+    $("btnReopen").onclick = () => act(() => call("updateSession", { sessionId: SID, adminKey: KEY, status: "entry" }));
+    $("btnClose").onclick = () => { if (confirm("今日の授業をおわりますか？（学生の画面は「おつかれさま」に変わります）")) act(() => call("updateSession", { sessionId: SID, adminKey: KEY, status: "closed" })); };
+  });
+}
+async function autoAnalyze() {
+  if (analyzing || !ST.rooms.some(r => !r.analysis)) return;
+  analyzing = true; const sid = SID;
+  try { for (let i = 0; i < 10 && sid === SID; i++) { const r = await call("analyzeRound", { sessionId: sid, adminKey: KEY, max: 2 }, { timeout: 90000 }); if (!r.remaining) break; } } catch (e) { if (!e.net) toast("ふりかえりを作れませんでした: " + e.message); }
+  analyzing = false;
+}
+
+const IMG = {};
+async function loadBrand() {
+  try { const r = await fetch("assets/manifest.json", { cache: "no-cache" }); if (r.ok) Object.entries(await r.json()).forEach(([k, f]) => IMG[k] = "assets/" + f); } catch { }
+  if (IMG.emblem) $("logoMark").innerHTML = `<img src="${IMG.emblem}" alt="">`;
+  if (IMG.mascot) $("vSetup").querySelector("h1").insertAdjacentHTML("beforebegin", `<img src="${IMG.mascot}" alt="">`);
+  if (IMG.bg_title) document.body.style.background = `linear-gradient(rgba(255,250,240,.6), rgba(255,250,240,.8)), url('${IMG.bg_title}') center/cover fixed`;
+}
+(async () => {
+  try { await Promise.all([Avatar.init(), loadBrand()]); } catch (e) { console.warn(e); }
+  $("toResults").href = link("results.html", {});
+  if (SID && keyFor(SID)) openSession(SID); else showSetup();
+})();
+</script>
+</body>
+</html>

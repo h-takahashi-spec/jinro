@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>アバター工房｜人柴村 — 追手門学院大学 理工学部「コンピュータインタラクション」授業ワーク</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #f3ead8; --muted: #b9ad96; --dim: #857b69; --gold: #e8b85a; --gold2: #f6d58e;
+  --glass: rgba(24, 19, 15, .8); --line: rgba(232, 184, 90, .22); --line2: rgba(255, 255, 255, .08);
+  --serif: "Shippori Mincho B1", "Yu Mincho", serif; --sans: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic UI", sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; color: var(--ink); font-family: var(--sans); font-size: 14.5px; min-height: 100vh; background:
+  radial-gradient(ellipse at 20% -10%, rgba(120,80,40,.35), transparent 55%), radial-gradient(ellipse at 100% 100%, rgba(60,50,110,.35), transparent 55%), #0e0b09; }
+button, input, select { font: inherit; color: inherit; }
+header { display: flex; align-items: center; gap: 12px; padding: 12px 22px; position: sticky; top: 0; z-index: 20; background: rgba(10,8,7,.88); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line2); }
+header .logo { font-family: var(--serif); font-weight: 800; font-size: 18px; letter-spacing: .12em; white-space: nowrap; }
+header .logo small { font-family: var(--sans); font-size: 11px; letter-spacing: .2em; color: var(--gold); margin-left: 8px; }
+header .sp { flex: 1; }
+.btn { border: 1px solid var(--line); background: rgba(0,0,0,.35); padding: 8px 16px; border-radius: 10px; cursor: pointer; white-space: nowrap; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: border-color .2s, transform .1s; }
+a.btn { color: var(--ink); }
+.btn:hover { border-color: var(--gold); }
+.btn:active { transform: translateY(1px); }
+.btn.gold { background: linear-gradient(180deg, var(--gold2), var(--gold)); color: #2a1c08; border-color: #f3cd7a; font-weight: 700; }
+.btn.small { padding: 4px 10px; font-size: 12.5px; }
+main { max-width: 1240px; margin: 0 auto; padding: 22px; display: grid; grid-template-columns: 400px 1fr; gap: 22px; align-items: start; }
+@media (max-width: 900px) { main { grid-template-columns: 1fr; padding: 14px; } header .logo small { display: none; } }
+.glass { background: var(--glass); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,.4); }
+
+/* 左: プレビュー */
+.preview { padding: 20px; position: sticky; top: 80px; }
+@media (max-width: 900px) { .preview { position: static; } }
+.stage { position: relative; aspect-ratio: 1; border-radius: 14px; overflow: hidden; box-shadow: 0 14px 40px rgba(0,0,0,.6), 0 0 0 2px rgba(232,184,90,.45); }
+.stage .ava-in { transition: transform .3s; }
+.pop { animation: pop .35s cubic-bezier(.3,1.6,.5,1); }
+@keyframes pop { 0% { transform: scale(.96); } 100% { transform: scale(1); } }
+.minis { display: flex; align-items: center; gap: 16px; margin-top: 16px; }
+.mini { width: 72px; height: 72px; border-radius: 50%; overflow: hidden; border: 3px solid rgba(232,184,90,.6); box-shadow: 0 4px 14px rgba(0,0,0,.5); flex-shrink: 0; }
+.mini.s { width: 34px; height: 34px; border-width: 2px; }
+.minis .lbl { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.name { margin-top: 16px; }
+.name label { font-size: 12.5px; color: var(--muted); display: block; margin-bottom: 4px; }
+.name input { width: 100%; background: rgba(0,0,0,.45); border: 1px solid var(--line2); border-radius: 10px; padding: 9px 12px; outline: none; }
+.name input:focus { border-color: var(--gold); }
+.acts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+.acts .btn { justify-content: center; }
+.acts .wide { grid-column: 1 / -1; }
+.saved { font-size: 12px; color: var(--muted); text-align: center; margin-top: 8px; min-height: 18px; }
+
+/* 右: パーツ */
+.editor { padding: 18px 20px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.tab { border: 1px solid var(--line2); background: rgba(0,0,0,.3); padding: 7px 14px; border-radius: 99px; cursor: pointer; color: var(--muted); }
+.tab.on { color: #2a1c08; background: var(--gold); border-color: var(--gold); font-weight: 700; }
+.sec { display: flex; align-items: center; gap: 10px; margin: 4px 0 10px; }
+.sec h2 { font-family: var(--serif); font-size: 17px; margin: 0; color: var(--gold2); letter-spacing: .08em; }
+.sec .sp { flex: 1; }
+.opts { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; }
+.opt { border: 2px solid transparent; border-radius: 12px; background: rgba(0,0,0,.3); padding: 6px; cursor: pointer; text-align: center; transition: border-color .15s, transform .15s; }
+.opt:hover { transform: translateY(-2px); border-color: rgba(232,184,90,.5); }
+.opt.on { border-color: var(--gold2); background: rgba(232,184,90,.12); }
+.opt .th { aspect-ratio: 1; border-radius: 8px; overflow: hidden; }
+.opt .lb { font-size: 12px; margin-top: 5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.opt.on .lb { color: var(--ink); }
+.opt .tagimg { font-size: 10px; color: var(--gold); }
+.colors { margin: 16px 0 4px; }
+.colors .t { font-size: 12.5px; color: var(--muted); margin-bottom: 8px; }
+.sw { display: flex; flex-wrap: wrap; gap: 8px; }
+.sw button { width: 34px; height: 34px; border-radius: 50%; border: 2px solid rgba(255,255,255,.15); cursor: pointer; box-shadow: inset 0 -3px 0 rgba(0,0,0,.2); transition: transform .15s; }
+.sw button:hover { transform: scale(1.12); }
+.sw button.on { border-color: #fff; box-shadow: 0 0 0 3px rgba(232,184,90,.6); }
+.hue { display: flex; align-items: center; gap: 12px; }
+.hue input { flex: 1; accent-color: var(--gold); }
+.note { font-size: 12px; color: var(--dim); margin-top: 14px; line-height: 1.7; }
+#toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); z-index: 200; background: rgba(30,40,24,.96); border: 1px solid #6fd39a; padding: 10px 18px; border-radius: 10px; }
+.hidden { display: none !important; }
+
+/* ===== ほのぼのテーマ「人柴村」 ===== */
+:root { --ink: #4b3a2a; --muted: #8b7760; --dim: #a8977f; --gold: #f0a23b; --gold2: #c9762a; --glass: rgba(255, 251, 243, .94); --line: rgba(222, 168, 96, .45); --line2: rgba(120, 90, 60, .14);
+  --serif: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", sans-serif; --sans: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Yu Gothic UI", sans-serif; }
+body { background: radial-gradient(ellipse at 10% -10%, #d9efff 0, transparent 50%), radial-gradient(ellipse at 100% 110%, #dff2cf 0, transparent 50%), #fbf4e6; color: var(--ink); font-weight: 500; }
+header { background: rgba(255, 249, 238, .94); border-bottom: 2px solid rgba(240, 196, 130, .45); }
+header .logo { color: #7a4a1a; font-weight: 900; }
+header .logo small { color: #c9762a; font-weight: 700; letter-spacing: .06em; }
+.btn { background: #fff; border: 2px solid var(--line); color: var(--ink); border-radius: 999px; font-weight: 700; box-shadow: 0 3px 0 rgba(200, 140, 70, .25); }
+a.btn { color: var(--ink); }
+.btn.gold { background: linear-gradient(180deg, #ffd27f, #f5a742); color: #5a3510; border-color: #f0a23b; box-shadow: 0 4px 0 #d4862a; }
+.glass { background: var(--glass); border: 2px solid rgba(240, 196, 130, .5); box-shadow: 0 10px 30px rgba(120, 80, 40, .14); }
+.stage { box-shadow: 0 12px 30px rgba(120, 80, 40, .25), 0 0 0 4px #fff, 0 0 0 7px rgba(240, 162, 59, .5); }
+.mini { border-color: #fff; box-shadow: 0 0 0 3px rgba(240, 162, 59, .5), 0 4px 12px rgba(90, 60, 30, .25); }
+.minis .lbl, .name label, .saved, .note, .colors .t { color: var(--muted); }
+.name input { background: #fff; border: 2px solid rgba(222, 168, 96, .4); color: var(--ink); }
+.tab { background: #fff; border: 2px solid rgba(200, 150, 90, .3); color: var(--muted); font-weight: 700; }
+.tab.on { color: #5a3510; background: #ffd27f; border-color: #f0a23b; }
+.sec h2 { color: #c9762a; font-weight: 900; }
+.opt { background: #fff; border: 2px solid rgba(200, 150, 90, .2); }
+.opt:hover { border-color: rgba(240, 162, 59, .6); }
+.opt.on { border-color: #f0a23b; background: #fff1d6; box-shadow: 0 0 0 3px rgba(255, 191, 94, .35); }
+.opt .lb { color: var(--muted); font-weight: 700; }
+.opt.on .lb { color: #7a4a1a; }
+.opt .tagimg { color: #c9762a; }
+.sw button { border: 3px solid #fff; box-shadow: 0 2px 6px rgba(90, 60, 30, .25); }
+.sw button.on { border-color: #fff; box-shadow: 0 0 0 3px #f0a23b, 0 2px 6px rgba(90, 60, 30, .25); }
+#toast { background: #effaf2; border: 2px solid #4cae73; color: var(--ink); }
+.site-foot { text-align: center; font-size: 12px; color: var(--muted); padding: 0 10px 26px; }
+.modes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.mode { border: 2px solid rgba(222,168,96,.45); background: #fff; border-radius: 16px; padding: 10px 12px; font: inherit; font-weight: 900; color: var(--ink, #4b3a2a); cursor: pointer; text-align: left; }
+.mode small { display: block; font-weight: 500; font-size: 11.5px; color: #8b7760; margin-top: 2px; }
+.mode.on { border-color: #f0a23b; background: linear-gradient(180deg, #fff6e3, #ffe9c2); box-shadow: 0 3px 0 rgba(200,140,70,.3); }
+.cheek { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-weight: 700; }
+.btn.big { padding: 12px 16px; font-size: 16px; }
+.btn:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(200, 140, 70, .3); }
+details.extra { margin-top: 6px; } details.extra summary { cursor: pointer; font-size: 12.5px; font-weight: 700; color: var(--muted); text-align: center; }
+:focus-visible { outline: 3px solid rgba(63, 127, 200, .65); outline-offset: 2px; }
+.preview .stage { width: min(100%, 40vh); margin: 0 auto; }
+.modes { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+@media (max-width: 900px) { main { grid-template-columns: minmax(0, 1fr); } .sec { flex-wrap: wrap; } .acts .btn { white-space: normal; padding: 8px 6px; font-size: 13.5px; } .btn.big { font-size: 15px; }
+  .preview .stage { width: 100%; } .preview { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 0 14px; padding: 14px; position: sticky; top: 56px; z-index: 5; } .preview .stage { grid-row: 1 / span 3; } .preview .minis, .preview #nameBox, .preview details.extra { display: none; } .preview .acts { margin-top: 0; } .preview .saved { margin: 4px 0 0; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">🎨 人柴村 アバター工房<small>人間も、柴犬も、お化けも。じぶんだけの村人をつくろう</small></div>
+  <span class="sp"></span>
+  <a class="btn small" id="toGame" href="index.html">変えずにもどる</a>
+</header>
+<main>
+  <section class="glass preview">
+    <div class="stage" id="stage"></div>
+    <div class="minis">
+      <div class="mini" id="mini1"></div><div class="mini s" id="mini2"></div>
+      <div class="lbl">円卓やログでは、このように丸く切り抜いて表示されます。</div>
+    </div>
+    <div id="nameBox">
+      <div class="name"><label for="name">ゲームで使う名前</label><input id="name" maxlength="20" placeholder="例: たなか"></div>
+      <div class="name"><label for="prof">ひとこと自己紹介（200文字まで・村のみんなに表示）</label><textarea id="prof" maxlength="200" rows="3" placeholder="例: 理工学部の1年生。好きなものはメロンパンと回路図。" style="width:100%;background:#fff;border:2px solid rgba(222,168,96,.4);border-radius:10px;padding:9px 12px;font:inherit;color:inherit;resize:vertical"></textarea></div>
+    </div>
+    <div class="acts">
+      <button class="btn gold wide big" id="btnSave">この姿に決める</button>
+      <button class="btn" id="btnRandom">🎲 おまかせ</button>
+      <button class="btn" id="btnUndo">↶ ひとつ戻す</button>
+    </div>
+    <div class="saved" id="saved"></div>
+    <details class="extra"><summary>そのほか</summary>
+      <div class="acts"><button class="btn" id="btnPng">⬇ 画像（PNG）で保存</button><button class="btn" id="btnReset">最初の姿にもどす</button></div>
+    </details>
+  </section>
+
+  <section class="glass editor">
+    <div class="modes" id="modes"><button class="mode" data-m="parts">🧑 パーツでつくる<small>人・柴犬・ねこ・お化け…</small></button><button class="mode" data-m="cr">🎨 図形でつくる<small>まるい「いきもの」を組み立てる</small></button></div>
+    <div class="tabs" id="tabs"></div>
+    <div class="sec"><h2 id="secTitle"></h2><span class="sp"></span><button class="btn small" id="btnRandLayer">🎲 ここだけおまかせ</button></div>
+    <div class="opts" id="opts"></div>
+    <div class="colors" id="colors"></div>
+    <div class="note">決めたアバターは、村のみんなの画面に出ます。あとから何度でも変えられます。</div>
+  </section>
+</main>
+<footer class="site-foot">🐾 人柴村 ・ 追手門学院大学 理工学部「コンピュータインタラクション」授業ワーク</footer>
+<div id="toast" class="hidden"></div>
+
+<script src="avatar.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const AS = /^[0-9a-z]{1,8}$/i.test(new URLSearchParams(location.search).get("as") || "") ? new URLSearchParams(location.search).get("as") : "";   // 動作チェック用の「別の学生」番号
+const skey = k => "jinro_" + (AS && k !== "api" ? "as" + AS + "_" : "") + k;
+const store = { get(k, d) { try { const v = localStorage.getItem(skey(k)); return v === null ? d : JSON.parse(v); } catch { return d; } }, set(k, v) { try { localStorage.setItem(skey(k), JSON.stringify(v)); } catch { } } };
+const params = new URLSearchParams(location.search);
+const back = params.get("back");
+$("toGame").href = back || ("index.html" + (params.get("api") ? "?api=" + encodeURIComponent(params.get("api")) : ""));
+// 授業のエントリーの途中で来たときは、名前と自己紹介はエントリー画面で入れるので、ここには出さない
+if (back && /[?&](session|estep)=/.test(back)) $("nameBox").style.display = "none";
+if (back) $("btnSave").textContent = "この姿に決めて、もどる";
+function toast(m) { const t = $("toast"); t.textContent = m; t.classList.remove("hidden"); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.add("hidden"), 2500); }
+
+let cfg, undoStack = [], layer = "kind";
+const CR_TABS = [{ k: "preset", ja: "おすすめ" }, { k: "cShape", ja: "からだ" }, { k: "cEars", ja: "みみ・あたま" }, { k: "cPat", ja: "もよう" }, { k: "cTail", ja: "しっぽ" },
+  { k: "cEyes", ja: "め" }, { k: "cMouth", ja: "くち" }, { k: "cAcc", ja: "かざり" }, { k: "bg", ja: "背景" }];
+const isCr = () => cfg.style === "creature";
+const COLOR_JA = { furC: "毛色・からだの色", bgC: "背景の色", bodyC: "服の色", skin: "肌の色", hairC: "髪の色", accC: "帽子・髪飾りの色", glsC: "眼鏡の色" };
+
+function set(patch, keepHistory) {
+  if (!keepHistory) { undoStack.push(cfg); if (undoStack.length > 50) undoStack.shift(); }
+  cfg = Avatar.normalize(Object.assign({}, cfg, patch));
+  draw(); dirty();
+}
+function dirty() { $("saved").textContent = JSON.stringify(Avatar.compact(cfg)) === JSON.stringify(Avatar.compact(store.get("avatar", null) || {})) ? "✓ この姿に決まっています" : "まだ決めていません（上のボタンで決定）"; }
+
+function draw() {
+  $("stage").innerHTML = Avatar.html(cfg);
+  $("stage").firstElementChild.classList.add("pop");
+  $("mini1").innerHTML = Avatar.html(cfg, { zoom: 1.35 });
+  $("mini2").innerHTML = Avatar.html(cfg, { zoom: 1.35 });
+  drawOptions();
+}
+
+function drawModes() {
+  $("modes").querySelectorAll(".mode").forEach(b => { b.classList.toggle("on", (b.dataset.m === "cr") === isCr()); b.onclick = () => {
+    if ((b.dataset.m === "cr") === isCr()) return;
+    if (b.dataset.m === "cr") { layer = "preset"; set(Object.assign({ style: "creature" }, cfg.cShape ? {} : Avatar.creature.DEFAULT)); }
+    else { layer = "kind"; set({ style: "parts" }); }
+    drawTabs(); drawOptions();
+  }; });
+}
+function drawTabs() {
+  drawModes();
+  if (isCr()) {
+    if (!CR_TABS.some(t => t.k === layer)) layer = "preset";
+    $("tabs").innerHTML = CR_TABS.map(t => `<button class="tab ${t.k === layer ? "on" : ""}" data-k="${t.k}">${t.ja}</button>`).join("");
+    $("tabs").querySelectorAll(".tab").forEach(b => b.onclick = () => { layer = b.dataset.k; drawTabs(); drawOptions(); });
+    return;
+  }
+  if (CR_TABS.some(t => t.k === layer) && layer !== "bg") layer = "kind";
+  const ki = Avatar.kindInfo(cfg.kind);
+  if (layer === "face" && !ki.human) layer = "kind";
+  $("tabs").innerHTML = Avatar.LAYERS.filter(L => L.k !== "face" || ki.human).map(L => `<button class="tab ${L.k === layer ? "on" : ""}" data-k="${L.k}">${L.ja}</button>`).join("");
+  $("tabs").querySelectorAll(".tab").forEach(b => b.onclick = () => { layer = b.dataset.k; drawTabs(); drawOptions(); });
+}
+
+function drawCrOptions() {
+  const C = Avatar.creature, t = CR_TABS.find(x => x.k === layer);
+  $("secTitle").textContent = t.ja;
+  $("btnRandLayer").style.visibility = layer === "preset" ? "hidden" : "";
+  const zoom = ["cEyes", "cMouth"].includes(layer) ? 1.7 : 1.15;
+  const list = layer === "preset" ? C.PRESETS.map(p => ({ id: p.ja, ja: p.ja, patch: Object.assign({}, C.DEFAULT, p.c) }))
+    : C.OPTS[C.KEYS[layer]].map(([id, ja]) => ({ id, ja, patch: { [layer]: id } }));
+  $("opts").innerHTML = list.map((o, i) => `<div class="opt ${layer !== "preset" && cfg[layer] === o.id ? "on" : ""}" data-i="${i}" title="${esc(o.ja)}"><div class="th">${Avatar.html(Object.assign({}, cfg, o.patch), { zoom })}</div><div class="lb">${esc(o.ja)}</div></div>`).join("");
+  $("opts").querySelectorAll(".opt").forEach(d => d.onclick = () => set(list[+d.dataset.i].patch));
+  let h = "";
+  const sw = (key, pal, label) => `<div class="t">${label}</div><div class="sw">${pal.map((c, i) => `<button style="background:${c}" class="${cfg[key] === i ? "on" : ""}" data-ck="${key}" data-i="${i}" aria-label="${label} ${i + 1}"></button>`).join("")}</div>`;
+  if (["preset", "cShape", "cEars", "cPat", "cTail"].includes(layer)) h += sw("cCol", C.OPTS.color, "からだの色");
+  if (layer === "cAcc" && cfg.cAcc !== "none") h += sw("cAccC", C.OPTS.accColor, "かざりの色");
+  if (layer === "cShape" || layer === "preset") h += `<label class="cheek"><input type="checkbox" id="cCheek" ${cfg.cCheek ? "checked" : ""}> ほっぺ（ピンクの丸）</label>`;
+  if (layer === "preset") h += `<div class="t">おすすめを選んでから、ほかのタブで自由に変えられます。</div>`;
+  $("colors").innerHTML = h;
+  $("colors").querySelectorAll("[data-ck]").forEach(b => b.onclick = () => set({ [b.dataset.ck]: Number(b.dataset.i) }));
+  if ($("cCheek")) $("cCheek").onchange = e => set({ cCheek: e.target.checked ? 1 : 0 });
+}
+function drawOptions() {
+  $("btnRandLayer").style.visibility = "";
+  if (isCr() && layer !== "bg") { if (!CR_TABS.some(t => t.k === layer)) layer = "preset"; return drawCrOptions(); }
+  if (!isCr() && !Avatar.LAYERS.some(x => x.k === layer)) layer = "kind";
+  const L = Avatar.LAYERS.find(x => x.k === layer);
+  $("secTitle").textContent = L.ja;
+  // 目・口・眼鏡は顔に寄せて見せる
+  const zoom = ["eyes", "mouth", "glasses"].includes(layer) ? 2.1 : ["face", "hair", "head"].includes(layer) ? 1.35 : layer === "kind" ? 1.15 : 1;
+  $("opts").innerHTML = Avatar.options(layer).map(o => {
+    const c = Object.assign({}, cfg, { [layer]: o.id });
+    return `<div class="opt ${cfg[layer] === o.id ? "on" : ""}" data-id="${esc(o.id)}" title="${esc(o.ja)}"><div class="th">${Avatar.html(c, { zoom })}</div>
+      <div class="lb">${esc(o.ja)}${o.img ? ' <span class="tagimg">●画像</span>' : ""}</div></div>`;
+  }).join("");
+  $("opts").querySelectorAll(".opt").forEach(d => d.onclick = () => {
+    const p = { [layer]: d.dataset.id };
+    if (layer === "kind") { p.furC = 0; if (d.dataset.id !== "human" && cfg.kind === "human" && cfg.hair !== "none") p.hair = "none"; if (d.dataset.id === "human" && cfg.body === "none") p.body = "tee"; }
+    set(p); if (layer === "kind") drawTabs();
+  });
+  // 色: 内蔵パーツならパレット、画像パーツなら色味スライダー
+  const isImg = String(cfg[layer]).startsWith("img:");
+  let h = "";
+  const pal = layer === "kind" ? (Avatar.PAL.FUR[cfg.kind] || []) : (L.pal ? Avatar.PAL[L.pal] : []);
+  if (L.color && !isImg && cfg[layer] !== "none" && pal.length) {
+    h += `<div class="t">${COLOR_JA[L.color]}</div><div class="sw">${pal.map((c, i) => { const col = typeof c === "string" ? c : c.c, nm = typeof c === "string" ? "色 " + (i + 1) : c.n;
+      return `<button style="background:${col}" class="${cfg[L.color] === i ? "on" : ""}" data-i="${i}" title="${nm}" aria-label="${nm}"></button>`; }).join("")}</div>`;
+  }
+  if (layer === "kind" && cfg.kind === "human") h += `<div class="t">肌の色は「顔」のタブで選べます。</div>`;
+  if (layer === "body" && Avatar.kindInfo(cfg.kind).noClothes) h += `<div class="t">🫧 お化けと精霊は服を着ません（ふわふわの体のままです）。</div>`;
+  if (L.hue && isImg) {
+    h += `<div class="t">色味を変える（画像パーツ）</div><div class="hue"><input type="range" min="0" max="359" value="${cfg[L.hue]}" id="hue"><button class="btn small" id="hue0">元の色</button></div>`;
+  }
+  $("colors").innerHTML = h;
+  $("colors").querySelectorAll("[data-i]").forEach(b => b.onclick = () => set({ [L.color]: Number(b.dataset.i) }));
+  const hue = $("hue");
+  if (hue) {
+    let started = false;
+    hue.oninput = () => { if (!started) { undoStack.push(cfg); started = true; } cfg = Avatar.normalize(Object.assign({}, cfg, { [L.hue]: Number(hue.value) })); $("stage").innerHTML = Avatar.html(cfg); $("mini1").innerHTML = Avatar.html(cfg, { zoom: 1.35 }); $("mini2").innerHTML = Avatar.html(cfg, { zoom: 1.35 }); dirty(); };
+    hue.onchange = () => { started = false; drawOptions(); };
+    $("hue0").onclick = () => set({ [L.hue]: 0 });
+  }
+}
+
+$("btnRandom").onclick = () => {
+  if (!isCr() && !Avatar.LAYERS.some(x => x.k === layer)) layer = "kind";
+  if (isCr()) set(Object.assign({ style: "creature" }, Avatar.creature.random()));
+  else set(Object.assign(Avatar.random(), { style: "parts" }));
+  drawTabs();
+};
+$("btnRandLayer").onclick = () => {
+  if (isCr() && layer !== "bg") { const r = Avatar.creature.random(); return set({ [layer]: r[layer] }); }
+  const r = Avatar.random(), L = Avatar.LAYERS.find(x => x.k === layer), p = { [layer]: r[layer] };
+  if (L.color) p[L.color] = r[L.color];
+  set(p);
+};
+$("btnUndo").onclick = () => { if (!undoStack.length) return toast("これ以上戻せません"); cfg = undoStack.pop(); if (isCr() !== CR_TABS.some(t => t.k === layer && t.k !== "bg")) layer = isCr() ? "preset" : "kind"; drawTabs(); draw(); dirty(); };
+$("btnReset").onclick = () => { set(isCr() ? Object.assign({}, Avatar.DEFAULT, Avatar.creature.DEFAULT, { style: "creature" }) : Object.assign({}, Avatar.DEFAULT, { style: "parts" })); drawTabs(); };
+$("btnSave").onclick = () => {
+  store.set("avatar", Avatar.compact(cfg));
+  const n = $("name").value.trim(); if (n) store.set("name", n);
+  store.set("profile", $("prof").value.trim().slice(0, 200));
+  dirty(); toast("この姿に決めました！");
+  if (back) setTimeout(() => location.href = back, 600);
+};
+$("btnPng").onclick = async () => {
+  try {
+    const blob = await Avatar.toPNG(cfg, 768);
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+    a.download = `avatar_${($("name").value.trim() || "villager").replace(/[\\/:*?"<>|]/g, "_")}.png`; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+  } catch (e) { toast("書き出しに失敗しました: " + e.message); }
+};
+$("name").value = store.get("name", "");
+$("prof").value = store.get("profile", "");
+$("prof").oninput = () => store.set("profile", $("prof").value.trim().slice(0, 200));
+$("name").onchange = () => store.set("name", $("name").value.trim());
+
+(async () => {
+  await Avatar.init();
+  const saved = store.get("avatar", null);
+  cfg = Avatar.normalize(saved || Avatar.random());
+  drawTabs(); draw(); dirty();
+})();
+</script>
+</body>
+</html>

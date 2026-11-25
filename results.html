@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>結果と分析｜人柴村 — 追手門学院大学 理工学部「コンピュータインタラクション」授業ワーク</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #f3ead8; --muted: #b9ad96; --dim: #857b69; --gold: #e8b85a; --gold2: #f6d58e; --blood: #c8423f; --blood2: #ff6a5e; --vil: #7fb8ff;
+  --glass: rgba(24, 19, 15, .78); --line: rgba(232, 184, 90, .22); --line2: rgba(255, 255, 255, .08); --grid: rgba(255,255,255,.07);
+  --surface: #1c1612; --r: 14px;
+  --serif: "Shippori Mincho B1", "Yu Mincho", serif; --sans: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic UI", sans-serif;
+  /* 発話カテゴリ（固定順。暗い背景で色覚多様性を検証済み） */
+  --c-REASON: #3987e5; --c-PROVOKE: #d95926; --c-ESTIMATE: #199e70; --c-INFO: #c98500; --c-EMOTION: #d55181;
+  --c-PROPOSE: #0ca30c; --c-QUESTION: #9085e9; --c-DEFEND: #e66767; --c-OTHER: #8a877d;
+  --win: #e8b85a; --lose: #6f6a60;
+}
+* { box-sizing: border-box; }
+body { margin: 0; color: var(--ink); font-family: var(--sans); font-size: 14.5px; background:
+  radial-gradient(ellipse at 80% -10%, rgba(80,60,120,.35), transparent 50%), radial-gradient(ellipse at 0% 110%, rgba(120,50,20,.35), transparent 50%), #0e0b09; min-height: 100vh; }
+button, input, select { font: inherit; color: inherit; }
+a { color: var(--gold2); }
+.hidden { display: none !important; }
+.muted { color: var(--muted); }
+header { display: flex; align-items: center; gap: 12px; padding: 12px 22px; position: sticky; top: 0; z-index: 20; background: rgba(10,8,7,.88); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line2); }
+header .logo { font-family: var(--serif); font-weight: 800; font-size: 18px; letter-spacing: .12em; white-space: nowrap; }
+header .logo small { font-family: var(--sans); font-size: 10px; letter-spacing: .3em; color: var(--gold); margin-left: 8px; }
+header .sp { flex: 1; }
+.tabs { display: flex; gap: 4px; }
+.tab { background: none; border: 1px solid transparent; padding: 7px 14px; border-radius: 99px; cursor: pointer; color: var(--muted); white-space: nowrap; }
+.tab.on { color: var(--ink); border-color: var(--line); background: rgba(232,184,90,.1); }
+.btn { border: 1px solid var(--line); background: rgba(0,0,0,.35); padding: 7px 14px; border-radius: 10px; cursor: pointer; white-space: nowrap; }
+.btn { text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+.btn:hover { border-color: var(--gold); }
+.btn.gold { background: linear-gradient(180deg, var(--gold2), var(--gold)); color: #2a1c08; border-color: #f3cd7a; font-weight: 700; }
+.btn.small { padding: 4px 10px; font-size: 12.5px; }
+main { max-width: 1240px; margin: 0 auto; padding: 18px 22px 60px; }
+.glass { background: var(--glass); border: 1px solid var(--line); border-radius: var(--r); box-shadow: 0 10px 40px rgba(0,0,0,.35); }
+.panel { padding: 18px 20px; margin-bottom: 16px; }
+h2 { font-family: var(--serif); font-size: 17px; margin: 0 0 4px; color: var(--gold2); letter-spacing: .08em; font-weight: 600; }
+.cap { color: var(--muted); font-size: 12.5px; margin: 0 0 14px; line-height: 1.6; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 900px) { .grid2 { grid-template-columns: 1fr; } .tabs .tab { padding: 6px 9px; } header .logo small { display: none; } }
+
+/* フィルタ */
+.filters { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; padding: 12px 18px; margin-bottom: 16px; }
+.filters label { font-size: 13px; color: var(--muted); display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
+.seg { display: inline-flex; border: 1px solid var(--line2); border-radius: 99px; overflow: hidden; }
+.seg button { background: none; border: 0; padding: 5px 12px; cursor: pointer; color: var(--muted); font-size: 13px; }
+.seg button.on { background: rgba(232,184,90,.18); color: var(--ink); }
+.filters .sp { flex: 1; }
+.pending { font-size: 13px; color: var(--muted); display: inline-flex; gap: 8px; align-items: center; }
+
+/* KPI */
+.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 16px; }
+@media (max-width: 760px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
+.kpi { padding: 16px 18px; }
+.kpi .v { font-family: var(--serif); font-size: 34px; font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.kpi .l { color: var(--muted); font-size: 12.5px; margin-top: 4px; }
+
+/* 凡例 */
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 0 0 12px; font-size: 12.5px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+
+/* 横棒（2 系列） */
+.hbars .row { display: grid; grid-template-columns: 110px 1fr; gap: 10px; align-items: center; padding: 5px 0; border-bottom: 1px solid var(--grid); }
+.hbars .row:last-child { border-bottom: 0; }
+.hbars .lab { font-size: 13px; display: flex; align-items: center; gap: 7px; white-space: nowrap; }
+.hbars .lab i { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.pair { display: grid; gap: 2px; }
+.bar { position: relative; height: 13px; display: flex; align-items: center; gap: 6px; }
+.bar b { display: block; height: 100%; border-radius: 0 4px 4px 0; min-width: 2px; transition: width .8s cubic-bezier(.3,.8,.3,1); }
+.bar em { font-style: normal; font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* 基準線つき棒 */
+.refbars { position: relative; }
+.refbars .row { display: grid; grid-template-columns: 110px 1fr 74px; gap: 10px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--grid); }
+.refbars .track { position: relative; height: 16px; }
+.refbars .track b { position: absolute; top: 0; height: 100%; border-radius: 4px; }
+.refbars .ref { position: absolute; top: -4px; bottom: -4px; width: 0; border-left: 2px dashed var(--gold2); opacity: .8; }
+.refbars .val { font-size: 12.5px; text-align: right; font-variant-numeric: tabular-nums; }
+.refbars .val small { color: var(--dim); display: block; font-size: 10.5px; }
+.up { color: #8fe0a0; } .down { color: #ff9a90; }
+.axis { display: grid; grid-template-columns: 110px 1fr 74px; gap: 10px; font-size: 11px; color: var(--dim); margin-top: 4px; }
+.axis .ticks { display: flex; justify-content: space-between; }
+
+/* ヒートマップ */
+.heat { overflow-x: auto; }
+.heat table { border-collapse: separate; border-spacing: 2px; width: 100%; min-width: 560px; table-layout: fixed; }
+.heat th:first-child { width: 70px; }
+.heat th { font-size: 11.5px; font-weight: 500; color: var(--muted); padding: 4px; white-space: nowrap; }
+.heat th.rl { text-align: right; padding-right: 8px; }
+.heat td { height: 34px; text-align: center; font-size: 11.5px; border-radius: 4px; font-variant-numeric: tabular-nums; }
+
+/* 100% 積み上げ */
+.stack100 .row { display: grid; grid-template-columns: 110px 1fr 54px; gap: 10px; align-items: center; margin: 8px 0; }
+.stack100 .seg100 { display: flex; height: 22px; gap: 2px; }
+.stack100 .seg100 b { height: 100%; display: grid; place-items: center; font-size: 10.5px; font-weight: 500; color: #fff; overflow: hidden; white-space: nowrap; }
+.stack100 .seg100 b:first-child { border-radius: 4px 0 0 4px; } .stack100 .seg100 b:last-child { border-radius: 0 4px 4px 0; }
+.stack100 .n { font-size: 11.5px; color: var(--dim); text-align: right; }
+.minibar { display: flex; height: 8px; gap: 1px; border-radius: 4px; overflow: hidden; min-width: 80px; }
+.minibar b { height: 100%; }
+
+.tablev { margin-top: 10px; overflow-x: auto; }
+.tablev table, .lb { width: 100%; border-collapse: collapse; font-size: 13px; }
+.tablev th, .tablev td, .lb th, .lb td { padding: 7px 8px; border-bottom: 1px solid var(--grid); text-align: left; white-space: nowrap; }
+.tablev th, .lb th { color: var(--muted); font-weight: 500; font-size: 12px; }
+.tablev td.n, .lb td.n { text-align: right; font-variant-numeric: tabular-nums; }
+.lb tr.click { cursor: pointer; } .lb tr.click:hover td { background: rgba(232,184,90,.06); }
+.toggle-table { font-size: 12px; color: var(--muted); background: none; border: 0; cursor: pointer; text-decoration: underline; padding: 0; }
+.empty { text-align: center; color: var(--muted); padding: 30px 10px; }
+
+/* 試合一覧 */
+.games { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 14px; }
+.gcard { padding: 14px 16px; position: relative; overflow: hidden; transition: transform .2s, border-color .2s; }
+.gcard:hover { transform: translateY(-2px); border-color: var(--gold); }
+.gcard .top { display: flex; align-items: center; gap: 8px; }
+.gcard .nm { font-weight: 700; font-size: 15px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gcard .meta { font-size: 12px; color: var(--muted); margin: 4px 0 8px; }
+.gcard .badges { display: flex; flex-wrap: wrap; gap: 4px; min-height: 22px; }
+.gcard .acts { display: flex; gap: 8px; margin-top: 10px; }
+.gcard .score { font-family: var(--serif); font-weight: 800; color: var(--gold2); font-size: 20px; }
+.gcard .score small { font-family: var(--sans); font-size: 10px; color: var(--muted); font-weight: 400; margin-left: 2px; }
+.gcard .rank { position: absolute; right: -6px; top: -6px; font-size: 54px; opacity: .08; font-family: var(--serif); font-weight: 800; }
+.chip { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(0,0,0,.4); border: 1px solid var(--line2); color: var(--muted); white-space: nowrap; }
+.chip.hl { color: var(--gold2); border-color: rgba(232,184,90,.5); }
+.chip.vil { color: var(--vil); border-color: rgba(127,184,255,.5); }
+.chip.wolf { color: var(--blood2); border-color: rgba(255,106,94,.5); }
+.cat { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; padding: 1px 8px; border-radius: 99px; color: #fff; white-space: nowrap; font-weight: 500; }
+
+/* 試合詳細 */
+.detail-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.detail-head .ttl { font-family: var(--serif); font-size: 26px; font-weight: 800; }
+.pcards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 14px; }
+.pcard { padding: 10px 12px; border-radius: 12px; background: rgba(0,0,0,.3); border: 1px solid var(--line2); cursor: pointer; }
+.pcard.sel { border-color: var(--gold); background: rgba(232,184,90,.08); }
+.pcard .h { display: flex; align-items: center; gap: 8px; }
+.av { width: 38px; height: 38px; border-radius: 50%; overflow: hidden; flex-shrink: 0; border: 2px solid rgba(232,184,90,.4); }
+.av img { width: 100%; height: 100%; object-fit: cover; }
+.av .fb { width: 100%; height: 100%; display: grid; place-items: center; font-weight: 700; font-family: var(--serif); }
+.pcard .nm { font-weight: 700; font-size: 13.5px; }
+.pcard .sub { font-size: 11.5px; color: var(--muted); }
+.pcard.dead .av { filter: grayscale(1) brightness(.6); }
+.timeline { margin-top: 12px; }
+.tl-day { font-family: var(--serif); color: var(--gold); letter-spacing: .3em; font-size: 13px; margin: 18px 0 8px; display: flex; gap: 10px; align-items: center; }
+.tl-day::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.tl-ev { font-size: 12.5px; padding: 6px 10px; margin: 6px 0; border-radius: 8px; background: rgba(0,0,0,.3); border-left: 3px solid var(--gold); }
+.tl-ev.night { border-left-color: #9fc3ff; } .tl-ev.blood { border-left-color: var(--blood2); }
+.utt { display: grid; grid-template-columns: 38px 1fr; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--grid); }
+.utt .who { font-size: 12px; color: var(--muted); display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 2px; }
+.utt .tx { font-size: 13.5px; line-height: 1.6; }
+.utt.dim { opacity: .35; }
+.catfilter { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 4px; }
+.catfilter button { border: 1px solid var(--line2); background: rgba(0,0,0,.3); border-radius: 99px; padding: 3px 10px; font-size: 12px; cursor: pointer; color: var(--muted); display: inline-flex; gap: 6px; align-items: center; }
+.catfilter button.on { color: var(--ink); border-color: var(--gold); }
+.catfilter i { width: 9px; height: 9px; border-radius: 50%; }
+
+#tip { position: fixed; z-index: 100; pointer-events: none; background: rgba(12,10,8,.96); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; font-size: 12.5px; max-width: 280px; box-shadow: 0 6px 20px rgba(0,0,0,.5); line-height: 1.5; }
+#toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); z-index: 200; background: rgba(60,18,16,.95); border: 1px solid var(--blood2); padding: 10px 18px; border-radius: 10px; }
+.spinner { width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(255,255,255,.15); border-top-color: var(--gold); animation: spin 1s linear infinite; display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.back { margin-bottom: 12px; }
+
+/* ===== ほのぼのテーマ「人柴村」 ===== */
+:root {
+  --ink: #4b3a2a; --muted: #8b7760; --dim: #a8977f; --gold: #f0a23b; --gold2: #c9762a; --blood: #e0685f; --blood2: #d9622b; --vil: #3f7fc8;
+  --glass: rgba(255, 251, 243, .94); --line: rgba(222, 168, 96, .45); --line2: rgba(120, 90, 60, .14); --grid: rgba(120, 90, 60, .12);
+  --surface: #fffaf1; --r: 20px;
+  --serif: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", sans-serif; --sans: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Yu Gothic UI", sans-serif;
+  --c-REASON: #2a78d6; --c-PROVOKE: #eb6834; --c-ESTIMATE: #1baf7a; --c-INFO: #eda100; --c-EMOTION: #e87ba4;
+  --c-PROPOSE: #008300; --c-QUESTION: #6250d6; --c-DEFEND: #e34948; --c-OTHER: #9a958a;
+  --win: #f0a23b; --lose: #b9ae9c;
+}
+body { background: radial-gradient(ellipse at 15% -10%, #d9efff 0, transparent 50%), radial-gradient(ellipse at 100% 110%, #dff2cf 0, transparent 50%), #fbf4e6; color: var(--ink); font-weight: 500; }
+header { background: rgba(255, 249, 238, .94); border-bottom: 2px solid rgba(240, 196, 130, .45); }
+header .logo { color: #7a4a1a; font-weight: 900; }
+header .logo small { color: #c9762a; font-weight: 700; letter-spacing: .1em; }
+.tab { color: var(--muted); font-weight: 700; }
+.tab.on { color: #5a3510; background: #ffe2b0; border-color: #f0a23b; }
+.btn { background: #fff; border: 2px solid var(--line); color: var(--ink); border-radius: 999px; font-weight: 700; box-shadow: 0 3px 0 rgba(200, 140, 70, .25); }
+.btn.gold { background: linear-gradient(180deg, #ffd27f, #f5a742); color: #5a3510; border-color: #f0a23b; box-shadow: 0 4px 0 #d4862a; }
+.glass { background: var(--glass); border: 2px solid rgba(240, 196, 130, .5); box-shadow: 0 8px 26px rgba(120, 80, 40, .12); }
+h2 { color: #c9762a; font-weight: 900; }
+.seg { border-color: rgba(200, 150, 90, .35); background: #fff; }
+.seg button { color: var(--muted); font-weight: 700; }
+.seg button.on { background: #ffe2b0; color: #5a3510; }
+.kpi .v { color: #7a4a1a; font-weight: 900; }
+.refbars .ref { border-left-color: #c9762a; }
+.up { color: #2f8a4a; } .down { color: #c4513c; }
+.heat td { color: var(--ink); }
+.lb tr.click:hover td { background: #fff1d6; }
+.gcard:hover { border-color: #f0a23b; }
+.gcard .score { color: #e08a2e; font-weight: 900; }
+.gcard .rank { opacity: .12; color: #f0a23b; }
+.chip { background: #fff8ec; border: 1.5px solid rgba(200, 150, 90, .35); color: var(--muted); font-weight: 700; }
+.chip.hl { color: #b8661c; border-color: #f0a23b; background: #fff1d6; }
+.chip.vil { color: #3f7fc8; border-color: #9cc3f0; background: #eef5ff; }
+.chip.wolf { color: #d9622b; border-color: #f2a27a; background: #fff1ea; }
+.pcard { background: #fff; border: 2px solid rgba(200, 150, 90, .25); }
+.pcard.sel { border-color: #f0a23b; background: #fff4df; }
+.av { border-color: #fff; box-shadow: 0 2px 6px rgba(90, 60, 30, .2); }
+.tl-day { color: #c9762a; font-weight: 900; }
+.tl-ev { background: #fff8ec; border-left-color: #f0a23b; }
+.tl-ev.night { border-left-color: #6f86d6; background: #f2f4ff; } .tl-ev.blood { border-left-color: #e8735f; background: #fff1ec; }
+.catfilter button { background: #fff; border-color: rgba(200, 150, 90, .3); }
+.catfilter button.on { border-color: #f0a23b; background: #fff1d6; color: var(--ink); }
+#tip { background: #fffdf8; border: 2px solid #f2d3a5; color: var(--ink); box-shadow: 0 6px 20px rgba(120, 80, 40, .2); }
+#toast { background: #fff3ef; border: 2px solid #e8735f; color: var(--ink); }
+.spinner { border-color: rgba(160, 120, 70, .2); border-top-color: #f0a23b; }
+.stack100 .seg100 b { color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.35); }
+.site-foot { text-align: center; font-size: 12px; color: var(--muted); padding: 0 10px 26px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">🐕 人柴村 ・ 結果と分析<small>RIKOU村 ・ コンピュータインタラクション</small></div>
+  <div class="tabs">
+    <button class="tab on" data-tab="overview">概要</button>
+    <button class="tab" data-tab="games">試合</button>
+    <button class="tab" data-tab="players">参加者</button>
+  </div>
+  <span class="sp"></span>
+  <a class="btn small" id="toGame" href="index.html">ゲームへ</a>
+</header>
+
+<main>
+  <div class="glass filters" id="filters">
+    <span class="muted" style="font-size:13px">対象</span>
+    <label><input type="checkbox" data-kind="human" checked> 人間</label>
+    <label><input type="checkbox" data-kind="agent" checked> エージェント</label>
+    <label><input type="checkbox" data-kind="ai" checked> AIモード</label>
+    <label><input type="checkbox" data-kind="cpu"> CPU</label>
+    <span class="seg" id="teamSeg"><button data-team="all" class="on">全陣営</button><button data-team="VILLAGER">村人チーム</button><button data-team="WEREWOLF">柴犬チーム</button></span>
+    <span class="sp"></span>
+    <span class="pending" id="pending"></span>
+    <button class="btn small" id="btnReload">↻ 更新</button>
+  </div>
+
+  <!-- 概要 -->
+  <section id="tab-overview">
+    <div class="kpis">
+      <div class="glass kpi"><div class="v" id="kGames">–</div><div class="l">試合数</div></div>
+      <div class="glass kpi"><div class="v" id="kUtt">–</div><div class="l">分類済みの発話</div></div>
+      <div class="glass kpi"><div class="v" id="kVil">–</div><div class="l">村人チームの勝率</div></div>
+      <div class="glass kpi"><div class="v" id="kWolf">–</div><div class="l">柴犬チームの勝率</div></div>
+    </div>
+    <div class="grid2">
+      <div class="glass panel">
+        <h2>勝った人と負けた人の話し方</h2>
+        <p class="cap">発話に占める各カテゴリの割合の平均です。勝者のほうが多いカテゴリは、勝ちにつながる話し方かもしれません。</p>
+        <div class="legend"><span><i style="background:var(--win)"></i>勝者</span><span><i style="background:var(--lose)"></i>敗者</span></div>
+        <div class="hbars" id="chWinLose"></div>
+        <button class="toggle-table" data-for="chWinLose">表で見る</button><div class="tablev hidden" id="chWinLose-t"></div>
+      </div>
+      <div class="glass panel">
+        <h2>その話し方を多く使った人の勝率</h2>
+        <p class="cap">各カテゴリの割合が上位 3 分の 1 だった人の勝率です。点線は同じ条件の全体の勝率です。陣営によって有利な話し方は違うので、上の「村人チーム・柴犬チーム」でも見比べてください。</p>
+        <div class="refbars" id="chHigh"></div>
+        <div class="axis"><span></span><div class="ticks"><span>0%</span><span>50%</span><span>100%</span></div><span></span></div>
+        <button class="toggle-table" data-for="chHigh">表で見る</button><div class="tablev hidden" id="chHigh-t"></div>
+      </div>
+    </div>
+    <div class="glass panel">
+      <h2>役職ごとの話し方</h2>
+      <p class="cap">役職ごとに、発話に占める各カテゴリの割合を色の濃さで表しています。セルにマウスを乗せると件数が出ます。</p>
+      <div class="heat" id="chHeat"></div>
+    </div>
+    <div class="glass panel">
+      <h2>人間・エージェント・CPU の話し方の違い</h2>
+      <p class="cap">発話全体のカテゴリ構成です（陣営の絞り込みは反映、対象の絞り込みは無視して比べます）。</p>
+      <div class="legend" id="catLegend"></div>
+      <div class="stack100" id="chKind"></div>
+    </div>
+    <div class="glass panel">
+      <h2>カテゴリの定義</h2>
+      <p class="cap">GPT には次の定義で分類させています（API キーが無いときはキーワードによる簡易分類）。発言内容が本当か嘘かではなく、話し方・働きかけ方で分けています。</p>
+      <div id="catDefs" class="tablev"></div>
+    </div>
+  </section>
+
+  <!-- 試合 -->
+  <section id="tab-games" class="hidden">
+    <div id="gameList">
+      <div class="row" style="display:flex;gap:10px;align-items:center;margin-bottom:12px">
+        <h2 style="margin:0">試合一覧</h2><span class="muted" style="font-size:12.5px">面白さスコアは、接戦・対抗CO・護衛成功・舌戦などの見どころから計算しています。</span>
+        <span style="flex:1"></span>
+        <span class="seg" id="sortSeg"><button data-sort="score" class="on">面白さ順</button><button data-sort="new">新しい順</button></span>
+      </div>
+      <div class="games" id="games"></div>
+    </div>
+    <div id="gameDetail" class="hidden"></div>
+  </section>
+
+  <!-- 参加者 -->
+  <section id="tab-players" class="hidden">
+    <div id="playerList" class="glass panel">
+      <h2>参加者ランキング</h2>
+      <p class="cap">学籍番号ごとに集計しています（名前は、いちばん新しい試合のニックネームです）。行をクリックすると、その人の発話と話し方の特徴が見られます。</p>
+      <div class="tablev" id="lb"></div>
+    </div>
+    <div id="playerDetail" class="hidden"></div>
+  </section>
+</main>
+<footer class="site-foot">🐾 人柴村 ・ 追手門学院大学 理工学部「コンピュータインタラクション」授業ワーク</footer>
+<div id="tip" class="hidden"></div>
+<div id="toast" class="hidden"></div>
+
+<script src="config.js"></script>
+<script src="avatar.js"></script>
+<script>
+const CAT = {
+  REASON: { ja: "推論" }, PROVOKE: { ja: "挑発・圧力" }, ESTIMATE: { ja: "推定" }, INFO: { ja: "情報開示" }, EMOTION: { ja: "感情表現" },
+  PROPOSE: { ja: "提案・誘導" }, QUESTION: { ja: "質問" }, DEFEND: { ja: "反論・弁明" }, OTHER: { ja: "その他" }
+};
+const CATS = Object.keys(CAT);
+const catColor = c => `var(--c-${c})`;
+const ROLE_JA = { WEREWOLF: "柴犬", POSSESSED: "柴推し", SEER: "占い師", MEDIUM: "霊媒師", BODYGUARD: "騎士", VILLAGER: "村人" };
+const ROLES = ["WEREWOLF", "POSSESSED", "SEER", "MEDIUM", "BODYGUARD", "VILLAGER"];
+const KIND_JA = { human: "人間", agent: "エージェント", cpu: "CPU", ai: "AIモード" };
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const pct = (x, d = 0) => isFinite(x) ? (x * 100).toFixed(d) + "%" : "–";
+const store = { get(k, d) { try { const v = localStorage.getItem("jinro_" + k); return v === null ? d : JSON.parse(v); } catch { return d; } }, set(k, v) { try { localStorage.setItem("jinro_" + k, JSON.stringify(v)); } catch { } } };
+const params = new URLSearchParams(location.search);
+if (params.get("api")) store.set("api", params.get("api"));
+const API = (params.get("api") || (window.JINRO_API || "").trim() || store.get("api", ""));
+$("toGame").href = "index.html" + (params.get("api") ? "?api=" + encodeURIComponent(params.get("api")) : "");
+
+async function call(action, p = {}) {
+  if (!API) throw new Error("サーバー URL が未設定です。ゲーム画面の「設定」で入力するか、?api= を付けて開いてください。");
+  const r = await fetch(API, { method: "POST", body: JSON.stringify({ action, ...p }) });
+  const j = await r.json(); if (!j.ok) throw new Error(j.error || "エラー"); return j;
+}
+function toast(m) { const t = $("toast"); t.textContent = m; t.classList.remove("hidden"); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.add("hidden"), 4000); }
+const DARK_TEXT = { INFO: 1, ESTIMATE: 1, EMOTION: 1, OTHER: 0 };
+function catChip(c) { return c ? `<span class="cat" style="background:${catColor(c)};color:${DARK_TEXT[c] ? "#3a2a1a" : "#fff"}">${CAT[c]?.ja || c}</span>` : ""; }
+function teamOf(r) { return r === "WEREWOLF" || r === "POSSESSED" ? "WEREWOLF" : "VILLAGER"; }
+
+// ---------- ツールチップ ----------
+const tip = $("tip");
+document.addEventListener("mousemove", e => {
+  const t = e.target.closest("[data-tip]");
+  if (!t) { tip.classList.add("hidden"); return; }
+  tip.innerHTML = t.dataset.tip; tip.classList.remove("hidden");
+  const x = Math.min(innerWidth - tip.offsetWidth - 10, e.clientX + 14), y = Math.min(innerHeight - tip.offsetHeight - 10, e.clientY + 14);
+  tip.style.left = x + "px"; tip.style.top = y + "px";
+});
+document.addEventListener("click", e => {
+  const b = e.target.closest(".toggle-table"); if (!b) return;
+  const t = $(b.dataset.for + "-t"); t.classList.toggle("hidden"); b.textContent = t.classList.contains("hidden") ? "表で見る" : "表を閉じる";
+});
+
+// ---------- アバター（ゲーム画面と同じ割り当て） ----------
+const IMG = {};
+async function loadAvatars() {
+  try { const r = await fetch("assets/manifest.json", { cache: "no-cache" }); if (r.ok) Object.assign(IMG, await r.json()); } catch { }
+}
+function roomHash(id) { let h = 0; for (const c of String(id || "")) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; }
+function avatar(roomId, p) {
+  // ゲーム画面と同じ優先順: 本人のアバター → 村人の肖像画像 → 名前から自動生成
+  if (p.avatar) return `<div class="av">${Avatar.html(p.avatar, { zoom: 1.35 })}</div>`;
+  const n = ((p.id - 1 + roomHash(roomId)) % 12) + 1, k = "avatar_" + String(n).padStart(2, "0");
+  if (IMG[k]) return `<div class="av"><img src="assets/${IMG[k]}" alt=""></div>`;
+  return `<div class="av">${Avatar.html(Avatar.random(roomId + ":" + p.id + ":" + (p.name || "")), { zoom: 1.35 })}</div>`;
+}
+
+// ---------- 状態 ----------
+let DATA = null;
+const F = { kinds: new Set(["human", "agent", "ai"]), team: "all", sort: "score" };
+document.querySelectorAll("#filters [data-kind]").forEach(cb => cb.onchange = () => { cb.checked ? F.kinds.add(cb.dataset.kind) : F.kinds.delete(cb.dataset.kind); renderAll(); });
+document.querySelectorAll("#teamSeg button").forEach(b => b.onclick = () => { F.team = b.dataset.team; document.querySelectorAll("#teamSeg button").forEach(x => x.classList.toggle("on", x === b)); renderAll(); });
+document.querySelectorAll("#sortSeg button").forEach(b => b.onclick = () => { F.sort = b.dataset.sort; document.querySelectorAll("#sortSeg button").forEach(x => x.classList.toggle("on", x === b)); renderGames(); });
+document.querySelectorAll(".tab").forEach(b => b.onclick = () => showTab(b.dataset.tab));
+$("btnReload").onclick = () => load(true);
+
+function showTab(t, keepDetail) {
+  document.querySelectorAll(".tab").forEach(b => b.classList.toggle("on", b.dataset.tab === t));
+  for (const k of ["overview", "games", "players"]) $("tab-" + k).classList.toggle("hidden", k !== t);
+  if (!keepDetail) { $("gameDetail").classList.add("hidden"); $("gameList").classList.remove("hidden"); $("playerDetail").classList.add("hidden"); $("playerList").classList.remove("hidden"); }
+  window.scrollTo({ top: 0 });
+}
+
+async function load(fresh) {
+  try {
+    $("pending").innerHTML = `<span class="spinner"></span> 読み込み中…`;
+    DATA = await call("results", { fresh: !!fresh });
+    renderAll();
+    autoClassify();
+  } catch (e) { toast(e.message); $("pending").textContent = ""; }
+}
+
+let classifying = false;
+async function autoClassify() {
+  const n = DATA.games.filter(g => !g.classified).length;
+  if (!n) { $("pending").textContent = `最終更新 ${new Date(DATA.builtAt).toLocaleTimeString()}`; return; }
+  $("pending").innerHTML = `<span class="spinner"></span> 未分類 ${n} 試合を分類中…`;
+  if (classifying) return; classifying = true;
+  try {
+    for (let i = 0; i < 20; i++) {
+      const r = await call("classify", { max: 2 });
+      if (r.busy) { await new Promise(s => setTimeout(s, 4000)); continue; }
+      if (!r.remaining) break;
+      $("pending").innerHTML = `<span class="spinner"></span> 未分類 ${r.remaining} 試合を分類中…`;
+    }
+  } catch (e) { toast("分類に失敗しました: " + e.message); }
+  classifying = false;
+  DATA = await call("results", { fresh: true }); renderAll();
+  $("pending").textContent = `最終更新 ${new Date(DATA.builtAt).toLocaleTimeString()}`;
+}
+
+// ---------- 集計 ----------
+function pool() {
+  return DATA.playerGames.filter(p => F.kinds.has(p.kind) && (F.team === "all" || p.team === F.team));
+}
+const share = (p, c) => p.total ? (p.counts[c] || 0) / p.total : 0;
+const mean = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : NaN;
+
+function renderAll() {
+  if (!DATA) return;
+  renderKpis(); renderWinLose(); renderHigh(); renderHeat(); renderKind(); renderDefs(); renderGames(); renderLeaderboard();
+}
+
+function renderKpis() {
+  const g = DATA.games;
+  $("kGames").textContent = g.length;
+  $("kUtt").textContent = DATA.playerGames.reduce((s, p) => s + p.total, 0).toLocaleString();
+  $("kVil").textContent = g.length ? pct(g.filter(x => x.winner === "VILLAGER").length / g.length) : "–";
+  $("kWolf").textContent = g.length ? pct(g.filter(x => x.winner === "WEREWOLF").length / g.length) : "–";
+}
+
+function renderWinLose() {
+  const P = pool().filter(p => p.total > 0);
+  const W = P.filter(p => p.won), L = P.filter(p => !p.won);
+  if (!W.length || !L.length) { $("chWinLose").innerHTML = `<div class="empty">勝者と敗者の両方のデータが必要です</div>`; $("chWinLose-t").innerHTML = ""; return; }
+  const rows = CATS.map(c => ({ c, w: mean(W.map(p => share(p, c))), l: mean(L.map(p => share(p, c))) }));
+  const max = Math.max(...rows.flatMap(r => [r.w, r.l]), .01);
+  $("chWinLose").innerHTML = rows.map(r => `<div class="row">
+    <div class="lab"><i style="background:${catColor(r.c)}"></i>${CAT[r.c].ja}</div>
+    <div class="pair">
+      <div class="bar" data-tip="<b>${CAT[r.c].ja}</b><br>勝者: ${pct(r.w, 1)}（${W.length} 人）"><b style="width:${r.w / max * 88}%;background:var(--win)"></b><em>${pct(r.w, 1)}</em></div>
+      <div class="bar" data-tip="<b>${CAT[r.c].ja}</b><br>敗者: ${pct(r.l, 1)}（${L.length} 人）"><b style="width:${r.l / max * 88}%;background:var(--lose)"></b><em>${pct(r.l, 1)}</em></div>
+    </div></div>`).join("");
+  $("chWinLose-t").innerHTML = `<table><tr><th>カテゴリ</th><th class="n">勝者</th><th class="n">敗者</th><th class="n">差</th></tr>${rows.map(r => `<tr><td>${CAT[r.c].ja}</td><td class="n">${pct(r.w, 1)}</td><td class="n">${pct(r.l, 1)}</td><td class="n">${((r.w - r.l) * 100).toFixed(1)}pt</td></tr>`).join("")}</table>`;
+}
+
+function renderHigh() {
+  const P = pool().filter(p => p.total >= 3);
+  if (P.length < 6) { $("chHigh").innerHTML = `<div class="empty">発話が 3 件以上ある人が 6 人以上必要です（現在 ${P.length} 人）</div>`; $("chHigh-t").innerHTML = ""; return; }
+  const base = mean(P.map(p => p.won));
+  const rows = CATS.map(c => {
+    const sh = P.map(p => share(p, c)).sort((a, b) => a - b);
+    const thr = sh[Math.floor(sh.length * 2 / 3)];
+    const hi = P.filter(p => share(p, c) >= thr && share(p, c) > 0);
+    return { c, n: hi.length, wr: hi.length ? mean(hi.map(p => p.won)) : NaN };
+  });
+  $("chHigh").innerHTML = rows.map(r => {
+    const d = r.wr - base;
+    return `<div class="row"><div class="lab hbars" style="display:flex;align-items:center;gap:7px;font-size:13px;white-space:nowrap"><i style="width:10px;height:10px;border-radius:50%;background:${catColor(r.c)}"></i>${CAT[r.c].ja}</div>
+      <div class="track" data-tip="<b>${CAT[r.c].ja}</b> を多く使った人<br>勝率 ${pct(r.wr, 1)}（${r.n} 人）<br>全体 ${pct(base, 1)}">
+        ${isFinite(r.wr) ? `<b style="left:0;width:${r.wr * 100}%;background:${catColor(r.c)};opacity:.9"></b>` : ""}<span class="ref" style="left:${base * 100}%"></span></div>
+      <div class="val">${isFinite(r.wr) ? `${pct(r.wr)} <span class="${d >= 0 ? "up" : "down"}">${d >= 0 ? "+" : ""}${(d * 100).toFixed(0)}</span>` : "–"}<small>n=${r.n}</small></div></div>`;
+  }).join("");
+  $("chHigh-t").innerHTML = `<table><tr><th>カテゴリ</th><th class="n">多用した人の勝率</th><th class="n">全体との差</th><th class="n">人数</th></tr>${rows.map(r => `<tr><td>${CAT[r.c].ja}</td><td class="n">${pct(r.wr, 1)}</td><td class="n">${isFinite(r.wr) ? ((r.wr - base) * 100).toFixed(1) + "pt" : "–"}</td><td class="n">${r.n}</td></tr>`).join("")}</table>
+    <div class="muted" style="font-size:12px;margin-top:6px">全体の勝率: ${pct(base, 1)}（${P.length} 人）。人数が少ないカテゴリは偶然の影響が大きいので注意してください。</div>`;
+}
+
+function renderHeat() {
+  const P = pool();
+  const rows = ROLES.map(r => {
+    const ps = P.filter(p => p.role === r), tot = ps.reduce((s, p) => s + p.total, 0);
+    return { r, tot, v: CATS.map(c => { const n = ps.reduce((s, p) => s + (p.counts[c] || 0), 0); return { c, n, s: tot ? n / tot : 0 }; }) };
+  }).filter(x => x.tot > 0);
+  if (!rows.length) { $("chHeat").innerHTML = `<div class="empty">データがありません</div>`; return; }
+  const max = Math.max(...rows.flatMap(x => x.v.map(v => v.s)), .01);
+  $("chHeat").innerHTML = `<table><tr><th></th>${CATS.map(c => `<th>${CAT[c].ja}</th>`).join("")}</tr>${rows.map(x => `<tr><th class="rl">${ROLE_JA[x.r]}<br><span style="color:var(--dim);font-size:10.5px">${x.tot}件</span></th>${x.v.map(v => {
+    const a = v.s / max, light = a > .55;
+    return `<td style="background:rgba(42,120,214,${(.06 + a * .9).toFixed(3)});color:${light ? "#fff" : "var(--ink)"}" data-tip="<b>${ROLE_JA[x.r]} × ${CAT[v.c].ja}</b><br>${v.n} 件 / ${x.tot} 件（${pct(v.s, 1)}）">${v.s ? pct(v.s) : ""}</td>`;
+  }).join("")}</tr>`).join("")}</table>`;
+}
+
+function renderKind() {
+  $("catLegend").innerHTML = CATS.map(c => `<span><i style="background:${catColor(c)}"></i>${CAT[c].ja}</span>`).join("");
+  const P = DATA.playerGames.filter(p => F.team === "all" || p.team === F.team);
+  const rows = ["human", "agent", "cpu"].map(k => {
+    const ps = P.filter(p => p.kind === k), tot = ps.reduce((s, p) => s + p.total, 0);
+    return { k, tot, v: CATS.map(c => ({ c, n: ps.reduce((s, p) => s + (p.counts[c] || 0), 0) })) };
+  }).filter(x => x.tot > 0);
+  $("chKind").innerHTML = rows.length ? rows.map(x => `<div class="row"><div style="font-size:13px">${KIND_JA[x.k]}</div><div class="seg100">${x.v.filter(v => v.n).map(v => {
+    const s = v.n / x.tot;
+    return `<b style="width:${s * 100}%;background:${catColor(v.c)}" data-tip="<b>${KIND_JA[x.k]} × ${CAT[v.c].ja}</b><br>${v.n} 件（${pct(s, 1)}）">${s >= .09 ? pct(s) : ""}</b>`;
+  }).join("")}</div><div class="n">${x.tot}件</div></div>`).join("") : `<div class="empty">データがありません</div>`;
+}
+
+function renderDefs() {
+  const d = DATA.catDef || {};
+  $("catDefs").innerHTML = `<table>${CATS.map(c => `<tr><td style="width:120px">${catChip(c)}</td><td style="white-space:normal">${esc((d[c] || "").replace(/^[^：]+：/, ""))}</td></tr>`).join("")}</table>`;
+}
+
+// ---------- 試合一覧 ----------
+function renderGames() {
+  if (!DATA) return;
+  const g = [...DATA.games].sort((a, b) => F.sort === "score" ? b.score - a.score || b.finishedAt - a.finishedAt : b.finishedAt - a.finishedAt);
+  $("games").innerHTML = g.map((x, i) => {
+    const kinds = {}; x.players.forEach(p => kinds[p.kind] = (kinds[p.kind] || 0) + 1);
+    return `<div class="glass gcard">${F.sort === "score" && i < 3 ? `<div class="rank">${i + 1}</div>` : ""}
+      <div class="top"><div class="nm">${esc(x.name)}</div><span class="score">${x.score}<small>点</small></span></div>
+      <div class="meta"><span class="chip ${x.winner === "VILLAGER" ? "vil" : "wolf"}">${x.winner === "VILLAGER" ? "村人チームの勝利" : "柴犬チームの勝利"}</span>
+        ${x.size}人村 ・ ${x.days}日 ・ ${Object.entries(kinds).map(([k, n]) => KIND_JA[k] + n).join(" / ")} ・ ${new Date(x.finishedAt).toLocaleString([], { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" })}</div>
+      <div class="badges">${x.badges.map(b => `<span class="chip hl">${esc(b)}</span>`).join("") || '<span class="chip">見どころなし</span>'}${x.classified ? "" : '<span class="chip">未分類</span>'}</div>
+      <div class="acts"><button class="btn small" data-detail="${esc(x.roomId)}">詳細を見る</button><a class="btn small gold" href="${replayUrl(x.roomId)}">▶ 演出付きリプレイ</a></div></div>`;
+  }).join("") || `<div class="empty">まだ終わった試合がありません</div>`;
+  $("games").querySelectorAll("[data-detail]").forEach(b => b.onclick = () => openGame(b.dataset.detail));
+}
+function replayUrl(id) { const q = new URLSearchParams(); if (params.get("api")) q.set("api", params.get("api")); q.set("replay", id); return "index.html?" + q; }
+
+// ---------- 試合詳細 ----------
+let G = null, selPlayer = null;
+async function openGame(id) {
+  showTab("games", true);
+  $("gameList").classList.add("hidden");
+  const box = $("gameDetail"); box.classList.remove("hidden");
+  box.innerHTML = `<div class="glass panel"><span class="spinner"></span> 読み込み中…</div>`;
+  try { G = (await call("game", { roomId: id })).game; selPlayer = null; renderGame(); history.replaceState(null, "", "?" + new URLSearchParams({ ...(params.get("api") ? { api: params.get("api") } : {}), game: id })); }
+  catch (e) { box.innerHTML = `<div class="glass panel">${esc(e.message)}</div>`; }
+}
+function renderGame() {
+  const box = $("gameDetail"), meta = DATA?.games.find(g => g.roomId === G.roomId);
+  const P = id => G.players.find(p => p.id === id) || { id, name: "?" };
+  const nm = id => `${id}番 ${esc(P(id).name)}`;
+  const byPlayer = {};
+  G.talks.forEach(t => (byPlayer[t.from] = byPlayer[t.from] || []).push(t));
+  const pcards = G.players.map(p => {
+    const ts = (byPlayer[p.id] || []).filter(t => t.cat), cnt = {}; ts.forEach(t => cnt[t.cat] = (cnt[t.cat] || 0) + 1);
+    const top = Object.entries(cnt).sort((a, b) => b[1] - a[1])[0];
+    const won = teamOf(p.role) === G.winner;
+    return `<div class="pcard ${p.alive ? "" : "dead"} ${selPlayer === p.id ? "sel" : ""}" data-p="${p.id}">
+      <div class="h">${avatar(G.roomId, p)}<div style="min-width:0"><div class="nm">${p.id}番 ${esc(p.name)} ${won ? "🏆" : ""}</div>
+      <div class="sub"><span class="chip ${teamOf(p.role) === "WEREWOLF" ? "wolf" : "vil"}">${ROLE_JA[p.role]}</span> ${KIND_JA[p.kind]} ・ ${p.alive ? "生存" : "死亡"}</div></div></div>
+      <div style="margin-top:8px" class="minibar">${CATS.filter(c => cnt[c]).map(c => `<b style="flex:${cnt[c]};background:${catColor(c)}" data-tip="${CAT[c].ja}: ${cnt[c]} 件"></b>`).join("") || '<b style="flex:1;background:rgba(255,255,255,.08)"></b>'}</div>
+      <div class="sub" style="margin-top:4px">${ts.length} 発話${top ? ` ・ 一番多い: ${CAT[top[0]].ja}` : ""}</div>${p.profile ? `<div class="sub" style="margin-top:4px;white-space:normal">💬 ${esc(p.profile)}</div>` : ""}</div>`;
+  }).join("");
+  // 時系列（神視点）
+  let tl = "";
+  const fs = G.seerFirst;
+  for (let d = 1; d <= G.day; d++) {
+    tl += `<div class="tl-day">${d}日目</div>`;
+    if (d === 1 && fs) tl += `<div class="tl-ev night">🔮 開始時の占い: ${nm(fs.by)} → ${nm(fs.target)} は ${fs.result === "WEREWOLF" ? "柴犬" : "人間"}</div>`;
+    G.events.filter(e => e.day === d && (e.type === "attack" || e.type === "noattack")).forEach(e => {
+      tl += e.type === "attack" ? `<div class="tl-ev blood">🐾 ${nm(e.target)} が もふもふの国へ連れていかれた</div>` : `<div class="tl-ev">🛡️ 平和な朝（騎士が守った）</div>`;
+    });
+    G.talks.filter(t => t.day === d).forEach(t => {
+      const show = !selPlayer || selPlayer === t.from;
+      tl += `<div class="utt ${show ? "" : "dim"}">${avatar(G.roomId, P(t.from))}<div><div class="who">${nm(t.from)} <span class="chip ${teamOf(P(t.from).role) === "WEREWOLF" ? "wolf" : "vil"}">${ROLE_JA[P(t.from).role]}</span> R${t.round} ${catChip(t.cat)}</div>
+        <div class="tx">${t.text ? esc(t.text) : '<span class="muted">（タグのみ）</span>'}</div></div></div>`;
+    });
+    const v = G.voteHistory.find(x => x.day === d);
+    if (v) tl += `<div class="tl-ev">⚖️ 投票: ${Object.entries(v.votes).map(([a, b]) => `${a}→${b}`).join("　")}<br>${nm(v.executed)}（${ROLE_JA[P(v.executed).role]}）が村を旅立った${v.tie ? "（同数のため くじびき）" : ""}</div>`;
+    const n = G.nightHistory.find(x => x.day === d);
+    if (n) {
+      const parts = [];
+      if (n.attack && n.attack.target) parts.push(`🐾 柴犬が連れていこうとした相手: ${nm(n.attack.target)}${n.attack.guarded ? "（騎士が守って失敗）" : ""}`);
+      n.divine.forEach(x => parts.push(`🔮 ${nm(x.by)} が ${nm(x.target)} を占った → ${x.result === "WEREWOLF" ? "柴犬" : "人間"}`));
+      if (n.guard) parts.push(`🛡️ ${nm(n.guard.by)} が ${nm(n.guard.target)} を護衛`);
+      tl += `<div class="tl-ev night">🌙 ${d}日目の夜<br>${parts.join("<br>")}</div>`;
+    }
+  }
+  box.innerHTML = `<button class="btn small back" id="backGames">← 試合一覧へ</button>
+    <div class="glass panel">
+      <div class="detail-head"><div class="ttl">${esc(G.name)}</div>
+        <span class="chip ${G.winner === "VILLAGER" ? "vil" : "wolf"}" style="font-size:13px">${G.winner === "VILLAGER" ? "🏡 村人チームの勝利" : "🐺 柴犬チームの勝利"}</span>
+        <span class="muted">${G.size}人村 ・ ${G.day}日 ・ ID ${esc(G.roomId)}${G.classified ? ` ・ 分類: ${G.classified === "gpt" ? "GPT" : "簡易"}` : " ・ 未分類"}</span>
+        <span style="flex:1"></span><a class="btn gold" href="${replayUrl(G.roomId)}">▶ 演出付きリプレイ</a></div>
+      ${meta ? `<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap"><span class="chip hl">面白さ ${meta.score} 点</span>${meta.badges.map(b => `<span class="chip hl">${esc(b)}</span>`).join("")}</div>` : ""}
+      <div class="pcards">${pcards}</div>
+      <div class="muted" style="font-size:12px;margin-top:8px">参加者をクリックすると、その人の発話だけを強調します（もう一度クリックで解除）。</div>
+    </div>
+    ${aiReasoningHTML()}
+    <div class="glass panel"><h2>試合の流れ（神視点）</h2><p class="cap">全員の役職と夜の行動も含めた記録です。各発話の色つきラベルが、GPT による話し方の分類です。</p>
+      <div class="timeline">${tl}</div></div>`;
+  $("backGames").onclick = () => { $("gameDetail").classList.add("hidden"); $("gameList").classList.remove("hidden"); history.replaceState(null, "", "?" + new URLSearchParams(params.get("api") ? { api: params.get("api") } : {})); };
+  box.querySelectorAll("[data-p]").forEach(c => c.onclick = () => { const id = Number(c.dataset.p); selPlayer = selPlayer === id ? null : id; const y = scrollY; renderGame(); scrollTo(0, y); });
+}
+
+
+// ---------- AI の推理の過程（ベイズ推定の確率の推移） ----------
+const AI_LABEL = { logic: "論理性", emotion: "感情", active: "積極性", skeptic: "疑い深さ", coop: "協調性", bold: "大胆さ" };
+function aiReasoningHTML() {
+  const B = G.beliefs || {}, ids = Object.keys(B).filter(k => (B[k] || []).length);
+  if (!ids.length) return "";
+  return `<div class="glass panel" id="ai"><h2>🧠 AIの推理の過程</h2>
+    <p class="cap">AIモードの参加者のAIが、試合中に「だれが柴犬か」をどう見積もっていたかを示します（ベイズ推論）。線はそれぞれのプレイヤーが柴犬である確率で、<b style="color:#d9622b">太いオレンジの線が本当の柴犬</b>、細い灰色の線が人間です。本当の柴犬の線が上にあるほど、推理がうまくいっています。点にマウスを乗せると、その時の理由が出ます。</p>
+    ${ids.map(pid => aiChart(Number(pid), B[pid])).join("")}</div>`;
+}
+function aiChart(pid, hist) {
+  const me = G.players.find(p => p.id === pid) || { name: "?" };
+  const others = G.players.filter(p => p.id !== pid);
+  const W = 760, H = 240, padL = 40, padR = 120, padT = 14, padB = 34, n = hist.length;
+  const x = i => padL + (n <= 1 ? (W - padL - padR) / 2 : i * (W - padL - padR) / (n - 1));
+  const y = v => padT + (1 - v) * (H - padT - padB);
+  const isWolf = p => p.role === "WEREWOLF";
+  const myWolf = me.role === "WEREWOLF";
+  let grid = "";
+  [0, .25, .5, .75, 1].forEach(v => grid += `<line x1="${padL}" x2="${W - padR}" y1="${y(v)}" y2="${y(v)}" stroke="rgba(120,90,60,.12)"/><text x="${padL - 6}" y="${y(v) + 4}" text-anchor="end" font-size="10" fill="#8b7760">${v * 100}%</text>`);
+  // 日の区切り
+  let lastDay = null;
+  hist.forEach((h, i) => { if (h.day !== lastDay) { grid += `<line x1="${x(i)}" x2="${x(i)}" y1="${padT}" y2="${H - padB}" stroke="rgba(120,90,60,.18)" stroke-dasharray="3 3"/><text x="${x(i) + 3}" y="${H - padB + 14}" font-size="10" fill="#8b7760">${h.day}日目</text>`; lastDay = h.day; } });
+  // 線（人間 → 柴犬の順に描いて柴犬を上に）
+  const order = others.slice().sort((a, b) => isWolf(a) - isWolf(b));
+  const labels = [];
+  let lines = "";
+  order.forEach(p => {
+    const pts = hist.map((h, i) => h.probs[p.id] !== undefined ? [x(i), y(h.probs[p.id]), h, i] : null).filter(Boolean);
+    if (!pts.length) return;
+    const wolf = isWolf(p);
+    const col = wolf ? "#e8742f" : "#a59b8c";
+    lines += `<polyline points="${pts.map(q => q[0].toFixed(1) + "," + q[1].toFixed(1)).join(" ")}" fill="none" stroke="${col}" stroke-width="${wolf ? 3.2 : 1.6}" stroke-linejoin="round" stroke-linecap="round" opacity="${wolf ? 1 : .85}"/>`;
+    pts.forEach(q => {
+      const h = q[2], why = (h.reasons[p.id] || []).map(r => `${r.d > 0 ? "▲" : "▼"} ${r.r}`).join("<br>");
+      lines += `<circle cx="${q[0]}" cy="${q[1]}" r="${wolf ? 4.5 : 3.5}" fill="${col}" stroke="#fff" stroke-width="1.5" data-tip="<b>${esc(p.name)}</b>（${ROLE_JA[p.role]}）<br>${h.day}日目 ${h.phase === "talk" ? "話し合い R" + h.round : h.phase === "vote" ? "投票" : "夜"}<br>柴犬の確率 <b>${Math.round(h.probs[p.id] * 100)}%</b>${why ? "<br>" + esc(why).replace(/&lt;br&gt;/g, "<br>") : ""}"/>`;
+    });
+    const last = pts[pts.length - 1];
+    labels.push({ y: last[1], text: p.name + (wolf ? "（柴犬）" : ""), col: wolf ? "#d9622b" : "#8b7760", wolf });
+  });
+  // ラベルの重なりをずらす
+  labels.sort((a, b) => a.y - b.y);
+  for (let i = 1; i < labels.length; i++) if (labels[i].y - labels[i - 1].y < 12) labels[i].y = labels[i - 1].y + 12;
+  const lab = labels.map(l => `<text x="${W - padR + 8}" y="${l.y + 4}" font-size="11" font-weight="${l.wolf ? 900 : 500}" fill="${l.col}">${esc(l.text)}</text>`).join("");
+  // 行動のログ
+  const log = hist.map(h => `<div class="tl-ev" style="border-left-color:${h.by === "llm" ? "#6f86d6" : "#f0a23b"};margin:4px 0"><b>${h.day}日目 ${h.phase === "talk" ? "話し合いR" + h.round : h.phase === "vote" ? "投票" : "夜"}</b>
+    ${h.act === "talk" ? (h.text ? `💬「${esc(h.text)}」` : "💬（発言しなかった）") : `${h.act === "vote" ? "🗳 投票" : "🌙 夜の行動"} → <b>${esc((G.players.find(p => p.id === h.target) || {}).name || "?")}</b>${h.why ? `（${esc(h.why)}）` : ""}`}
+    <span class="muted" style="font-size:11px">・${h.by === "llm" ? "LLMが判断" : "ルールで判断"}</span></div>`).join("");
+  const params = me.ai && me.ai.params;
+  // 最終時点で本当の柴犬を何位に置いていたか
+  const lastH = hist[hist.length - 1], rank = Object.entries(lastH.probs).sort((a, b) => b[1] - a[1]).map(e => Number(e[0]));
+  const wolfRanks = others.filter(isWolf).map(p => rank.indexOf(p.id) + 1).filter(r => r > 0);
+  return `<div style="border-top:2px dashed rgba(200,150,90,.3);padding-top:14px;margin-top:14px">
+    <div class="row" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">${avatar(G.roomId, me)}<div><b style="font-size:16px">${esc(me.name)} のAI</b>
+      <span class="chip ${teamOf(me.role) === "WEREWOLF" ? "wolf" : "vil"}">${ROLE_JA[me.role]}</span>
+      ${myWolf ? '<span class="muted" style="font-size:12px">（柴犬は仲間を知っているので、推理は「答えを知っている」状態です）</span>' : wolfRanks.length ? `<span class="chip hl">最後の時点で、本当の柴犬を ${wolfRanks.join("・")} 番目に疑っていた</span>` : ""}
+      <div class="muted" style="font-size:12px;margin-top:2px">${params ? Object.keys(AI_LABEL).map(k => `${AI_LABEL[k]} ${params[k]}`).join(" ・ ") : ""}${me.ai && me.ai.strategy ? `<br>戦略: ${esc(me.ai.strategy)}` : ""}</div></div></div>
+    <div style="overflow-x:auto"><svg viewBox="0 0 ${W} ${H}" style="width:100%;min-width:560px;max-width:${W}px;display:block;margin-top:8px">${grid}${lines}${lab}</svg></div>
+    <details><summary class="muted" style="cursor:pointer;font-size:13px">AIの行動の記録（${hist.length}件）</summary>${log}</details></div>`;
+}
+
+// ---------- 参加者 ----------
+function players() {
+  const m = {};
+  DATA.playerGames.filter(p => F.kinds.has(p.kind) && (F.team === "all" || p.team === F.team)).forEach(p => {
+    // 学籍番号ごとにまとめる（表示名は、いちばん新しい試合のニックネーム）
+    const k = p.key || "n:" + p.name;
+    const o = m[k] = m[k] || { key: k, name: p.name, at: -1, names: new Set(), kinds: new Set(), games: 0, wins: 0, total: 0, counts: {}, roles: {} };
+    if ((p.at || 0) >= o.at) { o.at = p.at || 0; o.name = p.name; }
+    o.names.add(p.name); o.kinds.add(p.kind); o.games++; o.wins += p.won; o.total += p.total;
+    CATS.forEach(c => o.counts[c] = (o.counts[c] || 0) + (p.counts[c] || 0));
+    const r = o.roles[p.role] = o.roles[p.role] || { g: 0, w: 0 }; r.g++; r.w += p.won;
+  });
+  return Object.values(m);
+}
+function renderLeaderboard() {
+  const ps = players().sort((a, b) => b.wins / b.games - a.wins / a.games || b.games - a.games);
+  $("lb").innerHTML = ps.length ? `<table class="lb"><tr><th>#</th><th>名前</th><th>種類</th><th class="n">試合</th><th class="n">勝ち</th><th class="n">勝率</th><th class="n">発話</th><th>話し方の構成</th><th>一番多い話し方</th></tr>${ps.map((p, i) => {
+    const top = Object.entries(p.counts).sort((a, b) => b[1] - a[1])[0];
+    return `<tr class="click" data-key="${esc(p.key)}"><td>${i + 1}</td><td><b>${esc(p.name)}</b>${p.names.size > 1 ? `<div class="muted" style="font-size:11px">別名: ${[...p.names].filter(n => n !== p.name).map(esc).join("、")}</div>` : ""}</td><td>${[...p.kinds].map(k => KIND_JA[k]).join("・")}</td>
+      <td class="n">${p.games}</td><td class="n">${p.wins}</td><td class="n">${pct(p.wins / p.games)}</td><td class="n">${p.total}</td>
+      <td><div class="minibar">${CATS.filter(c => p.counts[c]).map(c => `<b style="flex:${p.counts[c]};background:${catColor(c)}" data-tip="${CAT[c].ja}: ${p.counts[c]} 件（${pct(p.counts[c] / p.total)}）"></b>`).join("")}</div></td>
+      <td>${top && top[1] ? catChip(top[0]) : ""}</td></tr>`;
+  }).join("")}</table>` : `<div class="empty">データがありません</div>`;
+  $("lb").querySelectorAll("[data-key]").forEach(r => r.onclick = () => openPlayer(r.dataset.key));
+}
+
+let PU = null, puFilter = null;
+async function openPlayer(key) {
+  const name = (players().find(x => x.key === key) || {}).name || key.replace(/^n:/, "");
+  $("playerList").classList.add("hidden");
+  const box = $("playerDetail"); box.classList.remove("hidden");
+  box.innerHTML = `<div class="glass panel"><span class="spinner"></span> 読み込み中…</div>`;
+  try { PU = await call("playerUtterances", { key, name }); PU.key = key; puFilter = null; renderPlayer(); window.scrollTo({ top: 0 }); }
+  catch (e) { box.innerHTML = `<div class="glass panel">${esc(e.message)}</div>`; }
+}
+function renderPlayer() {
+  const p = players().find(x => x.key === PU.key) || { key: PU.key, names: new Set(), name: PU.name, games: 0, wins: 0, total: 0, counts: {}, roles: {}, kinds: new Set() };
+  const all = DATA.playerGames.filter(x => F.kinds.has(x.kind) && (F.team === "all" || x.team === F.team));
+  const allTot = all.reduce((s, x) => s + x.total, 0);
+  const avg = Object.fromEntries(CATS.map(c => [c, allTot ? all.reduce((s, x) => s + (x.counts[c] || 0), 0) / allTot : 0]));
+  const mine = Object.fromEntries(CATS.map(c => [c, p.total ? (p.counts[c] || 0) / p.total : 0]));
+  const max = Math.max(...CATS.flatMap(c => [avg[c], mine[c]]), .01);
+  const feat = CATS.map(c => ({ c, d: mine[c] - avg[c] })).sort((a, b) => b.d - a.d);
+  const us = PU.utterances.filter(u => !puFilter || u.cat === puFilter).slice().reverse();
+  const box = $("playerDetail");
+  box.innerHTML = `<button class="btn small back" id="backPlayers">← 参加者ランキングへ</button>
+    <div class="kpis">
+      <div class="glass kpi"><div class="v">${esc(p.name)}</div><div class="l">${[...p.kinds].map(k => KIND_JA[k]).join("・") || "–"}</div></div>
+      <div class="glass kpi"><div class="v">${p.games ? pct(p.wins / p.games) : "–"}</div><div class="l">勝率（${p.wins}勝 / ${p.games}試合）</div></div>
+      <div class="glass kpi"><div class="v">${p.total}</div><div class="l">発話数</div></div>
+      <div class="glass kpi"><div class="v" style="font-size:22px">${feat[0] && feat[0].d > 0 ? CAT[feat[0].c].ja : "–"}</div><div class="l">平均より特に多い話し方${feat[0] && feat[0].d > 0 ? `（+${(feat[0].d * 100).toFixed(0)}pt）` : ""}</div></div>
+    </div>
+    <div class="grid2">
+      <div class="glass panel"><h2>話し方の特徴</h2><p class="cap">この人の発話の構成と、全員の平均との比較です。</p>
+        <div class="legend"><span><i style="background:var(--gold2)"></i>${esc(p.name)}</span><span><i style="background:var(--lose)"></i>全員の平均</span></div>
+        <div class="hbars">${CATS.map(c => `<div class="row"><div class="lab"><i style="background:${catColor(c)}"></i>${CAT[c].ja}</div><div class="pair">
+          <div class="bar" data-tip="${esc(p.name)}: ${pct(mine[c], 1)}"><b style="width:${mine[c] / max * 88}%;background:var(--gold2)"></b><em>${pct(mine[c], 1)}</em></div>
+          <div class="bar" data-tip="平均: ${pct(avg[c], 1)}"><b style="width:${avg[c] / max * 88}%;background:var(--lose)"></b><em>${pct(avg[c], 1)}</em></div></div></div>`).join("")}</div></div>
+      <div class="glass panel"><h2>役職ごとの成績</h2><p class="cap">どの役職のときに勝てているか。</p>
+        <table class="lb"><tr><th>役職</th><th class="n">試合</th><th class="n">勝ち</th><th class="n">勝率</th></tr>
+        ${ROLES.filter(r => p.roles[r]).map(r => `<tr><td><span class="chip ${teamOf(r) === "WEREWOLF" ? "wolf" : "vil"}">${ROLE_JA[r]}</span></td><td class="n">${p.roles[r].g}</td><td class="n">${p.roles[r].w}</td><td class="n">${pct(p.roles[r].w / p.roles[r].g)}</td></tr>`).join("") || '<tr><td colspan="4" class="muted">データなし</td></tr>'}</table></div>
+    </div>
+    <div class="glass panel"><h2>発話の一覧</h2><p class="cap">新しい順。カテゴリで絞り込めます。勝った試合の発話には 🏆 が付きます。</p>
+      <div class="catfilter"><button class="${puFilter ? "" : "on"}" data-c="">すべて（${PU.utterances.length}）</button>${CATS.map(c => { const n = PU.utterances.filter(u => u.cat === c).length; return n ? `<button class="${puFilter === c ? "on" : ""}" data-c="${c}"><i style="background:${catColor(c)}"></i>${CAT[c].ja}（${n}）</button>` : ""; }).join("")}</div>
+      ${us.map(u => `<div class="utt" style="grid-template-columns:1fr"><div><div class="who">${catChip(u.cat)} <span class="chip ${u.team === "WEREWOLF" ? "wolf" : "vil"}">${ROLE_JA[u.role] || u.role}</span> ${u.won ? "🏆" : ""} ${u.day}日目 ・ <a href="#" data-g="${esc(u.roomId)}">試合 ${esc(u.roomId)}</a></div>
+        <div class="tx">${u.text ? esc(u.text) : '<span class="muted">（タグのみ）</span>'}</div></div></div>`).join("") || '<div class="empty">発話がありません</div>'}
+    </div>`;
+  $("backPlayers").onclick = () => { box.classList.add("hidden"); $("playerList").classList.remove("hidden"); };
+  box.querySelectorAll("[data-c]").forEach(b => b.onclick = () => { puFilter = b.dataset.c || null; const y = scrollY; renderPlayer(); scrollTo(0, y); });
+  box.querySelectorAll("[data-g]").forEach(a => a.onclick = e => { e.preventDefault(); openGame(a.dataset.g); });
+}
+
+// ---------- 起動 ----------
+(async () => {
+  await Promise.all([loadAvatars(), Avatar.init()]);
+  await load(false);
+  if (params.get("game")) openGame(params.get("game"));
+})();
+</script>
+</body>
+</html>
